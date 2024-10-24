@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "256151777860",
+    "project_id": "stii-bus-tracking",
+    "storage_bucket": "stii-bus-tracking.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:256151777860:android:1401319283c796f52e4211",
+        "android_client_info": {
+          "package_name": "com.stii.bus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3gSSxdma0zY1y3EdIVe19Y7W5IryRfqY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:256151777860:android:d95999c73e3b57f52e4211",
+        "android_client_info": {
+          "package_name": "com.stii.bustracking"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3gSSxdma0zY1y3EdIVe19Y7W5IryRfqY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
