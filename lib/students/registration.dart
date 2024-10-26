@@ -20,10 +20,13 @@ class _RegistrationFormState extends State<RegistrationForm> {
       routes: {
         '/sign-in': (context) {
           return SignInScreen(
-            providers: providers,
             actions: [
               AuthStateChangeAction<SignedIn>((context, state) {
-                Navigator.pushReplacementNamed(context, '/profile');
+                if (!state.user!.isEmailVerified) {
+                  Navigator.pushNamed(context, '/verify-email');
+                } else {
+                  Navigator.pushReplacementNamed(context, '/profile');
+                }
               }),
             ],
           );

@@ -17,29 +17,17 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -52,11 +40,50 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCBOvm6rUTpx5M9GtYYrePWH_HtYVXi2wA',
+    appId: '1:256151777860:web:f0ab2baf814306d72e4211',
+    messagingSenderId: '256151777860',
+    projectId: 'stii-bus-tracking',
+    authDomain: 'stii-bus-tracking.firebaseapp.com',
+    storageBucket: 'stii-bus-tracking.appspot.com',
+    measurementId: 'G-PER87FKMP5',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyC3gSSxdma0zY1y3EdIVe19Y7W5IryRfqY',
-    appId: '1:256151777860:android:1401319283c796f52e4211',
+    appId: '1:256151777860:android:b9fadd2a92d66db42e4211',
     messagingSenderId: '256151777860',
     projectId: 'stii-bus-tracking',
     storageBucket: 'stii-bus-tracking.appspot.com',
   );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBQS0fo42DuojdqWneaz3PaAMWnYqcOLzU',
+    appId: '1:256151777860:ios:b437877dc43277bf2e4211',
+    messagingSenderId: '256151777860',
+    projectId: 'stii-bus-tracking',
+    storageBucket: 'stii-bus-tracking.appspot.com',
+    iosBundleId: 'com.example.bus',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBQS0fo42DuojdqWneaz3PaAMWnYqcOLzU',
+    appId: '1:256151777860:ios:b437877dc43277bf2e4211',
+    messagingSenderId: '256151777860',
+    projectId: 'stii-bus-tracking',
+    storageBucket: 'stii-bus-tracking.appspot.com',
+    iosBundleId: 'com.example.bus',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCBOvm6rUTpx5M9GtYYrePWH_HtYVXi2wA',
+    appId: '1:256151777860:web:98066a9ee0ae997e2e4211',
+    messagingSenderId: '256151777860',
+    projectId: 'stii-bus-tracking',
+    authDomain: 'stii-bus-tracking.firebaseapp.com',
+    storageBucket: 'stii-bus-tracking.appspot.com',
+    measurementId: 'G-D8KM3XPFMX',
+  );
+
 }
