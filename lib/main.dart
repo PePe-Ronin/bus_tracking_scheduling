@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Firebase UI Auth Example',
+      title:
+          'School Bus Scheduling and Tracking Mobile App for Sibugay Technical Institute Incorporated',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
