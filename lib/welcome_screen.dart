@@ -3,25 +3,27 @@ import 'package:flutter/material.dart';
 import 'home_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome'),
+        title: const Text('Welcome'),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
+                MaterialPageRoute(builder: (context) => RegistrationScreen()),
               );
             },
           ),
         ],
       ),
-      body: Center(
+      body: const Center(
         child: Text(
           'You are signed in!',
           style: TextStyle(fontSize: 24),
