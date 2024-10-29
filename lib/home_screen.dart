@@ -24,6 +24,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _parentName = TextEditingController();
   final _parentContact = TextEditingController();
   final _studentLatLNG = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   void _register() async {
     try {
@@ -43,10 +44,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         'gradeLevel': _gradeLevel.text,
         'section': _section.text,
         'strand': _strand.text,
-        'studentContact': _studentContact,
+        'ContactNo': _studentContact,
         'parentName': _parentName.text,
         'parentContact': _parentContact.text,
         'studentLatLNG': _studentLatLNG.text,
+        'confirmPassword': _confirmPasswordController,
       });
 
       // Navigate to the Welcome screen
@@ -102,15 +104,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 child: Column(
                   children: [
                     TextField(
-                      controller: _emailController,
-                      decoration: InputDecoration(labelText: 'Email'),
-                    ),
-                    TextField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(labelText: 'Password'),
-                      obscureText: true,
-                    ),
-                    TextField(
                       controller: _lastName,
                       decoration: InputDecoration(labelText: 'Last Name'),
                     ),
@@ -123,6 +116,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       decoration: InputDecoration(labelText: 'Middle Name'),
                     ),
                     TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(labelText: 'Email'),
+                    ),
+                    TextField(
+                      controller: _studentContact,
+                      decoration: InputDecoration(labelText: 'Contact No.'),
+                    ),
+                    TextField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(labelText: 'Password'),
+                      obscureText: true,
+                    ),
+                    TextField(
+                      controller: _confirmPasswordController,
+                      decoration:
+                          InputDecoration(labelText: 'Confirm Password'),
+                      obscureText: true,
+                    ),
+                    TextField(
                       controller: _gradeLevel,
                       decoration: InputDecoration(labelText: 'Grade Level'),
                     ),
@@ -133,11 +145,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     TextField(
                       controller: _strand,
                       decoration: InputDecoration(labelText: 'Strand'),
-                    ),
-                    TextField(
-                      controller: _studentContact,
-                      decoration:
-                          InputDecoration(labelText: 'Student Contact No.'),
                     ),
                     TextField(
                       controller: _parentName,
