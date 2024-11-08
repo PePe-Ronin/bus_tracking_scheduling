@@ -1,15 +1,15 @@
-import 'package:bus/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:bus/login_screen.dart';
 
-class Dashboard extends StatelessWidget {
-  const Dashboard({super.key});
+class AdminDashboard extends StatelessWidget {
+  const AdminDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Welcome'),
+        title: const Text('Admin'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -25,7 +25,7 @@ class Dashboard extends StatelessWidget {
       ),
       body: const Center(
         child: Text(
-          'You are signed in!',
+          'Admin Dashboard',
           style: TextStyle(fontSize: 24),
         ),
       ),

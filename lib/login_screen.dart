@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:bus/dashboard.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:bus/adminDashboard/admin_dashboard.dart';
+import 'package:bus/parentDashboard/parent_dashboard.dart';
 import 'package:bus/registration_screen.dart';
-import 'package:bus/forgotpassword.dart'; // Import the forgot password screen
+import 'package:bus/forgotpassword.dart';
+import 'package:bus/studentsDashboard/student_dashboard.dart';
+import 'package:bus/driverDashboard/driver_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,11 +27,57 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
 
-      // Navigate to dashboard after successful login
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Dashboard()),
-      );
+      // Fetch user data from Firestore
+      User? user = userCredential.user;
+      if (user != null) {
+        // Get user type from Firestore
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (userDoc.exists) {
+          String userType = userDoc[
+              'userType']; // Assuming 'userType' is a field in Firestore
+
+          // Navigate based on user type
+          if (userType == "Administrator") {
+            // Admin login
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const AdminDashboard()),
+            );
+          } else if (userType == "Parent") {
+            // Parent login
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ParentDashboard()),
+            );
+          } else if (userType == "Student") {
+            // Student login
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const StudentDashboard()),
+            );
+          } else if (userType == "Driver") {
+            // Driver login
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const DriverDashboard()),
+            );
+          } else {
+            print('Unknown user type');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Unknown user type')),
+            );
+          }
+        } else {
+          print('User document not found');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('User data not found')),
+          );
+        }
+      }
     } catch (e) {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
