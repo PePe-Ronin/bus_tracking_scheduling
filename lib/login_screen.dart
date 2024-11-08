@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bus/dashboard.dart';
 import 'package:bus/registration_screen.dart';
+import 'package:bus/forgotpassword.dart'; // Import the forgot password screen
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
 
-      // Navigate to dashboard or main screen after successful login
+      // Navigate to dashboard after successful login
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const Dashboard()),
@@ -159,10 +160,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          color: Color.fromRGBO(75, 57, 239, 1),
+                      GestureDetector(
+                        onTap: () {
+                          // Redirect to Forgot Password Screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ForgotPasswordScreen()),
+                          );
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            color: Color.fromRGBO(75, 57, 239, 1),
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
