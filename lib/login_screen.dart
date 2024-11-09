@@ -19,70 +19,75 @@ class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isPasswordVisible = false;
 
+  // Login method
   void _login() async {
-    try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
+    if (_formKey.currentState!.validate()) {
+      try {
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
 
-      // Fetch user data from Firestore
-      User? user = userCredential.user;
-      if (user != null) {
-        // Get user type from Firestore
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get();
+        User? user = userCredential.user;
+        if (user != null) {
+          DocumentSnapshot userDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
 
-        if (userDoc.exists) {
-          String userType = userDoc[
-              'userType']; // Assuming 'userType' is a field in Firestore
+          if (userDoc.exists) {
+            String userType = userDoc['userType'];
 
-          // Navigate based on user type
-          if (userType == "Administrator") {
-            // Admin login
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const AdminDashboard()),
-            );
-          } else if (userType == "Parent") {
-            // Parent login
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const ParentDashboard()),
-            );
-          } else if (userType == "Student") {
-            // Student login
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const StudentDashboard()),
-            );
-          } else if (userType == "Driver") {
-            // Driver login
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const DriverDashboard()),
-            );
+            if (userType == "Administrator") {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AdminDashboard()),
+              );
+            } else if (userType == "Parent") {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ParentDashboard()),
+              );
+            } else if (userType == "Student") {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const StudentDashboard()),
+              );
+            } else if (userType == "Driver") {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const DriverDashboard()),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Unknown user type')),
+              );
+            }
           } else {
-            print('Unknown user type');
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Unknown user type')),
+              const SnackBar(content: Text('User data not found')),
             );
           }
-        } else {
-          print('User document not found');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('User data not found')),
-          );
         }
+      } catch (e) {
+        String errorMessage = 'Login failed. Please try again.';
+        if (e is FirebaseAuthException) {
+          if (e.code == 'user-not-found') {
+            errorMessage = 'No user found for that email.';
+          } else if (e.code == 'wrong-password') {
+            errorMessage = 'Incorrect password. Please try again.';
+          }
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
       }
-    } catch (e) {
-      print('Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed: ${e.toString()}')),
-      );
     }
   }
 
@@ -94,7 +99,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
           Positioned.fill(
             child: Image.asset(
               'assets/edsa.png',
@@ -105,7 +109,6 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: const EdgeInsets.only(top: 10.0, left: 16.0, right: 16.0),
             child: Column(
               children: [
-                // Logo
                 Center(
                   child: Image.asset(
                     'assets/bustii.png',
@@ -113,142 +116,158 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: screenWidth * 0.5,
                   ),
                 ),
-                // Login Form
-                Container(
-                  padding: const EdgeInsets.all(16.0),
-                  margin: const EdgeInsets.only(top: 16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Login',
-                        style: TextStyle(
-                          color: Color.fromRGBO(75, 57, 239, 1),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 28,
+                Form(
+                  key: _formKey,
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0),
+                    margin: const EdgeInsets.only(top: 16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 10,
+                          offset: Offset(0, 2),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Custom styled Email TextField
-                      TextField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          labelStyle: const TextStyle(
-                              color: Color.fromRGBO(75, 57, 239, 1)),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromRGBO(75, 57, 239, 1),
-                                width: 2),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromRGBO(75, 57, 239, 1),
-                                width: 2),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      // Custom styled Password TextField
-                      TextField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          labelStyle: const TextStyle(
-                              color: Color.fromRGBO(75, 57, 239, 1)),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromRGBO(75, 57, 239, 1),
-                                width: 2),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Color.fromRGBO(75, 57, 239, 1),
-                                width: 2),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 15),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity, // Expand to full width
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: _login,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(75, 57, 239, 1),
-                          ),
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      GestureDetector(
-                        onTap: () {
-                          // Redirect to Forgot Password Screen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const ForgotPasswordScreen()),
-                          );
-                        },
-                        child: Text(
-                          'Forgot Password?',
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Login',
                           style: TextStyle(
                             color: Color.fromRGBO(75, 57, 239, 1),
                             fontWeight: FontWeight.bold,
+                            fontSize: 28,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                // Place the "Don't have an account?" and Register button below the form
-                SizedBox(
-                  height: 50, // Height for "Don't have an account?" text
-                  child: Center(
-                    child: Text(
-                      "Don't have an account?",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            labelStyle: const TextStyle(
+                                color: Color.fromRGBO(75, 57, 239, 1)),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Color.fromRGBO(75, 57, 239, 1),
+                                  width: 2),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Color.fromRGBO(75, 57, 239, 1),
+                                  width: 2),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            } else if (!RegExp(
+                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                .hasMatch(value)) {
+                              return 'Enter a valid email';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: !_isPasswordVisible,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            labelStyle: const TextStyle(
+                                color: Color.fromRGBO(75, 57, 239, 1)),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Color.fromRGBO(75, 57, 239, 1),
+                                  width: 2),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  color: Color.fromRGBO(75, 57, 239, 1),
+                                  width: 2),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Color.fromRGBO(75, 57, 239, 1),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            } else if (value.length < 6) {
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: _login,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromRGBO(75, 57, 239, 1),
+                            ),
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ForgotPasswordScreen()),
+                            );
+                          },
+                          child: const Text(
+                            'Forgot Password?',
+                            style: TextStyle(
+                              color: Color.fromRGBO(75, 57, 239, 1),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                SizedBox(height: 10), // Space before Register button
+                const SizedBox(height: 10),
+                const Text(
+                  "Don't have an account?",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+                const SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Navigate to the registration screen
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -256,8 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      side: BorderSide(
-                          color: Colors.white, width: 2), // White border
+                      side: const BorderSide(color: Colors.white, width: 2),
                       backgroundColor: Colors.white.withOpacity(0.2),
                     ),
                     child: const Text(

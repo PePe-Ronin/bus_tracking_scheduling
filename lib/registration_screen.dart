@@ -13,9 +13,13 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+
+  final _formKey = GlobalKey<FormState>();
+
   String? _userType;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final _lastName = TextEditingController();
   final _firstName = TextEditingController();
   final _middleName = TextEditingController();
@@ -26,75 +30,63 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _parentName = TextEditingController();
   final _parentContact = TextEditingController();
   final _studentLatLNG = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
 
-  // Show error dialog when passwords do not match
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
+  bool _isPasswordHidden = true;
+  bool _isConfirmPasswordHidden = true;
+
+  void _showErrorPrompt(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 
   void _register() async {
-    // Check if passwords match
-    if (_passwordController.text != _confirmPasswordController.text) {
-      _showErrorDialog("Passwords do not match.");
-      return;
-    }
-
-    try {
-      // Attempt to create user with email and password
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-
-      await _firestore.collection('users').doc(userCredential.user!.uid).set({
-        'userType': _userType,
-        'email': _emailController.text,
-        'lastName': _lastName.text,
-        'firstName': _firstName.text,
-        'middleName': _middleName.text,
-        'gradeLevel': _gradeLevel.text,
-        'section': _section.text,
-        'strand': _strand.text,
-        'ContactNo': _studentContact.text,
-        'parentName': _parentName.text,
-        'parentContact': _parentContact.text,
-        'studentLatLNG': _studentLatLNG.text,
-        'confirmPassword': _confirmPasswordController.text,
-      });
-
-      // Redirect to dashboard
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Dashboard()),
-      );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        _showErrorDialog(
-            "The email is already in use. Please use a different email.");
-      } else {
-        // Handle other errors
-        _showErrorDialog("An error occurred. Please try again.");
+    if (_formKey.currentState!.validate()) {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        _showErrorPrompt("Passwords do not match.");
+        return;
       }
-    } catch (e) {
-      print('Error: $e');
+
+      try {
+        UserCredential userCredential =
+            await _auth.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+
+        await _firestore.collection('users').doc(userCredential.user!.uid).set({
+          'userType': _userType,
+          'email': _emailController.text,
+          'lastName': _lastName.text,
+          'firstName': _firstName.text,
+          'middleName': _middleName.text,
+          'gradeLevel': _gradeLevel.text,
+          'section': _section.text,
+          'strand': _strand.text,
+          'ContactNo': _studentContact.text,
+          'parentName': _parentName.text,
+          'parentContact': _parentContact.text,
+          'studentLatLNG': _studentLatLNG.text,
+        });
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Dashboard()),
+        );
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'email-already-in-use') {
+          _showErrorPrompt(
+              "The email is already in use. Please use a different email.");
+        } else {
+          _showErrorPrompt("An error occurred. Please try again.");
+        }
+      } catch (e) {
+        _showErrorPrompt("An unexpected error occurred. Please try again.");
+      }
     }
   }
 
@@ -106,7 +98,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
           Positioned.fill(
             child: Image.asset(
               'assets/edsa.png',
@@ -117,12 +108,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             builder: (context, constraints) {
               return Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.05, // 5% horizontal padding
-                  vertical: screenHeight * 0.02, // 2% vertical padding
+                  horizontal: screenWidth * 0.05,
+                  vertical: screenHeight * 0.02,
                 ),
                 child: Column(
                   children: [
-                    // Logo
                     Center(
                       child: Image.asset(
                         'assets/bustii.png',
@@ -130,7 +120,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         width: constraints.maxWidth * 0.5,
                       ),
                     ),
-                    // Registration Form
                     Expanded(
                       child: SingleChildScrollView(
                         child: Container(
@@ -147,87 +136,244 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               ),
                             ],
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Register',
-                                style: TextStyle(
-                                  color: Color.fromRGBO(75, 57, 239, 1),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 28,
-                                ),
-                              ),
-                              DropdownButton<String>(
-                                value: _userType,
-                                hint: const Text('Please Select Role'),
-                                isExpanded: true,
-                                items: const [
-                                  DropdownMenuItem(
-                                    child: Text('Parent'),
-                                    value: 'Parent',
-                                  ),
-                                  DropdownMenuItem(
-                                    child: Text('Student'),
-                                    value: 'Student',
-                                  ),
-                                  DropdownMenuItem(
-                                    child: Text('Driver'),
-                                    value: 'Driver',
-                                  ),
-                                ],
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _userType = newValue;
-                                  });
-                                },
-                              ),
-                              TextField(
-                                controller: _emailController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Email',
-                                ),
-                              ),
-                              TextField(
-                                controller: _passwordController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Password',
-                                ),
-                                obscureText: true,
-                              ),
-                              TextField(
-                                controller: _confirmPasswordController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Confirm Password',
-                                ),
-                                obscureText: true,
-                              ),
-                              const SizedBox(height: 20),
-                              SizedBox(
-                                width: double.infinity,
-                                height: 50,
-                                child: ElevatedButton(
-                                  onPressed: _register,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        Color.fromRGBO(75, 57, 239, 1),
-                                  ),
-                                  child: const Text(
-                                    'Register',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Register',
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(75, 57, 239, 1),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 28,
                                   ),
                                 ),
-                              ),
-                            ],
+                                DropdownButtonFormField<String>(
+                                  value: _userType,
+                                  hint: const Text('Please Select Role'),
+                                  isExpanded: true,
+                                  items: const [
+                                    DropdownMenuItem(
+                                      child: Text('Parent'),
+                                      value: 'Parent',
+                                    ),
+                                    DropdownMenuItem(
+                                      child: Text('Student'),
+                                      value: 'Student',
+                                    ),
+                                    DropdownMenuItem(
+                                      child: Text('Driver'),
+                                      value: 'Driver',
+                                    ),
+                                  ],
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _userType = newValue;
+                                    });
+                                  },
+                                  validator: (value) => value == null
+                                      ? 'Please select a role'
+                                      : null,
+                                ),
+                                TextFormField(
+                                  controller: _emailController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Email',
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your email';
+                                    } else if (!RegExp(
+                                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                        .hasMatch(value)) {
+                                      return 'Enter a valid email';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                TextFormField(
+                                  controller: _passwordController,
+                                  decoration: InputDecoration(
+                                    labelText: 'Password',
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _isPasswordHidden
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isPasswordHidden =
+                                              !_isPasswordHidden;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  obscureText: _isPasswordHidden,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a password';
+                                    } else if (value.length < 6) {
+                                      return 'Password must be at least 6 characters';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                TextFormField(
+                                  controller: _confirmPasswordController,
+                                  decoration: InputDecoration(
+                                    labelText: 'Confirm Password',
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _isConfirmPasswordHidden
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isConfirmPasswordHidden =
+                                              !_isConfirmPasswordHidden;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  obscureText: _isConfirmPasswordHidden,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please confirm your password';
+                                    } else if (value !=
+                                        _passwordController.text) {
+                                      return 'Passwords do not match';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                TextFormField(
+                                  controller: _lastName,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Last Name'),
+                                  validator: (value) =>
+                                      value == null || value.isEmpty
+                                          ? 'Please enter your last name'
+                                          : null,
+                                ),
+                                TextFormField(
+                                  controller: _firstName,
+                                  decoration: const InputDecoration(
+                                      labelText: 'First Name'),
+                                  validator: (value) =>
+                                      value == null || value.isEmpty
+                                          ? 'Please enter your first name'
+                                          : null,
+                                ),
+                                TextFormField(
+                                  controller: _middleName,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Middle Name'),
+                                  validator: (value) =>
+                                      value == null || value.isEmpty
+                                          ? 'Please enter your middle name'
+                                          : null,
+                                ),
+                                TextFormField(
+                                  controller: _gradeLevel,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Grade Level'),
+                                  validator: (value) =>
+                                      value == null || value.isEmpty
+                                          ? 'Please enter your grade level'
+                                          : null,
+                                ),
+                                TextFormField(
+                                  controller: _section,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Section'),
+                                  validator: (value) =>
+                                      value == null || value.isEmpty
+                                          ? 'Please enter your section'
+                                          : null,
+                                ),
+                                TextFormField(
+                                  controller: _strand,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Strand'),
+                                  validator: (value) =>
+                                      value == null || value.isEmpty
+                                          ? 'Please enter your strand'
+                                          : null,
+                                ),
+                                TextFormField(
+                                  controller: _studentContact,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Student Contact Number'),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your contact number';
+                                    } else if (!RegExp(r'^\d{10,11}$')
+                                        .hasMatch(value)) {
+                                      return 'Enter a valid contact number';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                TextFormField(
+                                  controller: _parentName,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Parent Name'),
+                                  validator: (value) =>
+                                      value == null || value.isEmpty
+                                          ? 'Please enter parent name'
+                                          : null,
+                                ),
+                                TextFormField(
+                                  controller: _parentContact,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Parent Contact Number'),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter parent contact number';
+                                    } else if (!RegExp(r'^\d{10,11}$')
+                                        .hasMatch(value)) {
+                                      return 'Enter a valid contact number';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                TextFormField(
+                                  controller: _studentLatLNG,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Student Location (Lat, Lng)'),
+                                  validator: (value) =>
+                                      value == null || value.isEmpty
+                                          ? 'Please enter your location'
+                                          : null,
+                                ),
+                                const SizedBox(height: 20),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 50,
+                                  child: ElevatedButton(
+                                    onPressed: _register,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Color.fromRGBO(75, 57, 239, 1),
+                                    ),
+                                    child: const Text(
+                                      'Register',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                        height:
-                            screenHeight * 0.1), // Dynamic height at the bottom
+                    SizedBox(height: screenHeight * 0.1),
                   ],
                 ),
               );
