@@ -20,21 +20,43 @@ class _AdminDashboardState extends State<AdminDashboard> {
     _mapController = controller;
   }
 
+  void _navigateToProfile() {
+    // Navigate to the profile screen
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
+  }
+
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin Dashboard'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'profile') {
+                _navigateToProfile();
+              } else if (value == 'logout') {
+                _logout();
+              }
             },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'profile',
+                child: Text('Profile'),
+              ),
+              const PopupMenuItem(
+                value: 'logout',
+                child: Text('Logout'),
+              ),
+            ],
           ),
         ],
       ),
