@@ -53,7 +53,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: ElevatedButton(
                 onPressed: _resetPassword,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(75, 57, 239, 1),
+                  backgroundColor: const Color.fromRGBO(75, 57, 239, 1),
                 ),
                 child: const Text(
                   'Reset Password',

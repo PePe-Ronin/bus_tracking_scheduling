@@ -155,16 +155,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   isExpanded: true,
                                   items: const [
                                     DropdownMenuItem(
-                                      child: Text('Parent'),
                                       value: 'Parent',
+                                      child: Text('Parent'),
                                     ),
                                     DropdownMenuItem(
-                                      child: Text('Student'),
                                       value: 'Student',
+                                      child: Text('Student'),
                                     ),
                                     DropdownMenuItem(
-                                      child: Text('Driver'),
                                       value: 'Driver',
+                                      child: Text('Driver'),
                                     ),
                                   ],
                                   onChanged: (String? newValue) {
@@ -357,7 +357,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     onPressed: _register,
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor:
-                                          Color.fromRGBO(75, 57, 239, 1),
+                                          const Color.fromRGBO(75, 57, 239, 1),
                                     ),
                                     child: const Text(
                                       'Register',

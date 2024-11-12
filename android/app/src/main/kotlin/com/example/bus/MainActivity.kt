@@ -1,4 +1,4 @@
-package com.example.bus
+package com.stii.bus
 
 import io.flutter.embedding.android.FlutterActivity
 
