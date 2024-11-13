@@ -15,6 +15,7 @@ class AdminDashboard extends StatefulWidget {
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
+  // ignore: unused_field
   late GoogleMapController _mapController;
   final LatLng _initialLocation =
       const LatLng(7.785552035561738, 122.5863163838556); // Example location
