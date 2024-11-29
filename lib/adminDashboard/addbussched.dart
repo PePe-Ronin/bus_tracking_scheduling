@@ -1,3 +1,4 @@
+import 'package:bus/adminDashboard/map.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -13,9 +14,6 @@ class _BusSchedulerState extends State<BusScheduler> {
   String? _selectedDriver;
   List<String> _drivers = [];
   bool _isLoading = true;
-
-  TimeOfDay? _startTime;
-  TimeOfDay? _endTime;
 
   final TextEditingController _routeNameController = TextEditingController();
   final TextEditingController _busNumberController = TextEditingController();
@@ -34,27 +32,21 @@ class _BusSchedulerState extends State<BusScheduler> {
 
   Future<void> _fetchDrivers() async {
     try {
-      // Fetch all documents from the 'drivers' collection
       QuerySnapshot snapshot =
           await FirebaseFirestore.instance.collection('drivers').get();
 
-      // Combine firstName, middleName, and lastName for each driver
       List<String> fetchedDrivers = snapshot.docs.map((doc) {
         String firstName = doc['firstName'] ?? '';
         String middleName = doc['middleName'] ?? '';
         String lastName = doc['lastName'] ?? '';
-
-        // Concatenate names with spaces
         return '$firstName $middleName $lastName'.trim();
       }).toList();
 
-      // Update the state with the fetched driver names
       setState(() {
         _drivers = fetchedDrivers;
         _isLoading = false;
       });
     } catch (e) {
-      // Handle any errors
       setState(() {
         _isLoading = false;
       });
@@ -64,31 +56,16 @@ class _BusSchedulerState extends State<BusScheduler> {
     }
   }
 
-  Future<void> _pickTime(BuildContext context, bool isStartTime) async {
-    final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (pickedTime != null) {
-      setState(() {
-        if (isStartTime) {
-          _startTime = pickedTime;
-        } else {
-          _endTime = pickedTime;
-        }
-      });
-    }
-  }
-
   Future<void> _openMapForLocation(bool isStartingPoint) async {
     final LatLng? selectedLocation = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MapPickerScreen(
           initialLocation: isStartingPoint
-              ? _startingPointLocation ?? const LatLng(37.7749, -122.4194)
-              : _endPointLocation ?? const LatLng(37.7749, -122.4194),
+              ? _startingPointLocation ??
+                  const LatLng(7.785552035561738, 122.5863163838556)
+              : _endPointLocation ??
+                  const LatLng(7.785552035561738, 122.5863163838556),
         ),
       ),
     );
@@ -113,9 +90,7 @@ class _BusSchedulerState extends State<BusScheduler> {
         _busNumberController.text.isEmpty ||
         _selectedDriver == null ||
         _startingPointLocation == null ||
-        _endPointLocation == null ||
-        _startTime == null ||
-        _endTime == null) {
+        _endPointLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all required fields')),
       );
@@ -123,7 +98,7 @@ class _BusSchedulerState extends State<BusScheduler> {
     }
 
     try {
-      await FirebaseFirestore.instance.collection('bus_schedules').add({
+      await FirebaseFirestore.instance.collection('routes').add({
         'routeName': _routeNameController.text,
         'busNumber': _busNumberController.text,
         'driver': _selectedDriver,
@@ -135,14 +110,13 @@ class _BusSchedulerState extends State<BusScheduler> {
           'latitude': _endPointLocation!.latitude,
           'longitude': _endPointLocation!.longitude,
         },
-        'startTime': _startTime!.format(context),
-        'endTime': _endTime!.format(context),
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Bus schedule added successfully!')),
       );
-      Navigator.pop(context); // Go back after successful submission
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MapAdmin()));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saving schedule: $e')),
@@ -166,7 +140,6 @@ class _BusSchedulerState extends State<BusScheduler> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  // Route Information Section
                   Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
@@ -220,7 +193,6 @@ class _BusSchedulerState extends State<BusScheduler> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Location Picker Section
                   Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
@@ -258,60 +230,18 @@ class _BusSchedulerState extends State<BusScheduler> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  // Schedule Section
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              children: [
-                                const Text("Start Time"),
-                                const SizedBox(height: 8),
-                                OutlinedButton.icon(
-                                  onPressed: () => _pickTime(context, true),
-                                  icon: const Icon(Icons.access_time),
-                                  label: Text(
-                                    _startTime == null
-                                        ? "Select Time"
-                                        : _startTime!.format(context),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                const Text("End Time"),
-                                const SizedBox(height: 8),
-                                OutlinedButton.icon(
-                                  onPressed: () => _pickTime(context, false),
-                                  icon: const Icon(Icons.access_time),
-                                  label: Text(
-                                    _endTime == null
-                                        ? "Select Time"
-                                        : _endTime!.format(context),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 24),
-                  // Submit Button
                   ElevatedButton(
                     onPressed: _submitBusSchedule,
-                    child: const Text("Submit"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    ),
+                    child: const Text(
+                      "Submit",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
@@ -320,32 +250,76 @@ class _BusSchedulerState extends State<BusScheduler> {
   }
 }
 
-class MapPickerScreen extends StatelessWidget {
+class MapPickerScreen extends StatefulWidget {
   final LatLng initialLocation;
 
   const MapPickerScreen({required this.initialLocation, super.key});
+
+  @override
+  State<MapPickerScreen> createState() => _MapPickerScreenState();
+}
+
+class _MapPickerScreenState extends State<MapPickerScreen> {
+  late LatLng _selectedLocation;
+  late Set<Marker> _markers;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedLocation = widget.initialLocation;
+    _markers = {
+      Marker(
+        markerId: const MarkerId('selected-location'),
+        position: _selectedLocation,
+        draggable: true,
+        onDragEnd: (newPosition) {
+          setState(() {
+            _selectedLocation = newPosition;
+          });
+        },
+      ),
+    };
+  }
+
+  void _onMapTapped(LatLng position) {
+    setState(() {
+      _selectedLocation = position;
+      _markers = {
+        Marker(
+          markerId: const MarkerId('selected-location'),
+          position: position,
+          draggable: true,
+          onDragEnd: (newPosition) {
+            setState(() {
+              _selectedLocation = newPosition;
+            });
+          },
+        ),
+      };
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Pick a Location"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () {
+              Navigator.pop(context, _selectedLocation);
+            },
+          ),
+        ],
       ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
-          target: initialLocation,
-          zoom: 14,
+          target: _selectedLocation,
+          zoom: 15.0,
         ),
-        markers: {
-          Marker(
-            markerId: const MarkerId('selected-location'),
-            position: initialLocation,
-            draggable: true,
-            onDragEnd: (newPosition) {
-              Navigator.pop(context, newPosition);
-            },
-          ),
-        },
+        onTap: _onMapTapped,
+        markers: _markers,
       ),
     );
   }

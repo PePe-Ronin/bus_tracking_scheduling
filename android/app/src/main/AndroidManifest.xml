@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     
     <application
+        android:hardwareAccelerated="true"
         android:label="bus"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
@@ -31,8 +32,7 @@
         <!-- Add Google Maps API key here -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDOq8T71-5sE9EK244LiWpKjjgmr6Pbwzo" />
-
+            android:value="AIzaSyDniknKPiyrNblNig9beoxbMb-uJpvI8Gg" />
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
