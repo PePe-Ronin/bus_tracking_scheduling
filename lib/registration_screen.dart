@@ -58,7 +58,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           password: _passwordController.text,
         );
 
-        await _firestore.collection('users').doc(userCredential.user!.uid).set({
+        // Prepare common user data
+        final userData = {
           'userType': _userType,
           'email': _emailController.text,
           'lastName': _lastName.text,
@@ -71,7 +72,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           'parentName': _parentName.text,
           'parentContact': _parentContact.text,
           'studentLatLNG': _studentLatLNG.text,
-        });
+        };
+
+        // Save data to respective collections
+        if (_userType == 'Student') {
+          await _firestore
+              .collection('students')
+              .doc(userCredential.user!.uid)
+              .set(userData);
+        } else if (_userType == 'Parent') {
+          await _firestore
+              .collection('parents')
+              .doc(userCredential.user!.uid)
+              .set(userData);
+        } else {
+          await _firestore
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .set(userData);
+        }
 
         Navigator.pushReplacement(
           context,
@@ -161,10 +180,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     DropdownMenuItem(
                                       value: 'Student',
                                       child: Text('Student'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'Driver',
-                                      child: Text('Driver'),
                                     ),
                                   ],
                                   onChanged: (String? newValue) {

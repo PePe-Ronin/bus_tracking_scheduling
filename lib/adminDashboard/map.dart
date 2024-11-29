@@ -1,20 +1,20 @@
+import 'package:bus/adminDashboard/viewparentregistration.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:bus/login_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:bus/adminDashboard/settings.dart';
 import 'package:bus/adminDashboard/drivers.dart';
-import 'package:bus/adminDashboard/parents.dart';
-import 'package:bus/adminDashboard/students.dart';
+import 'package:bus/adminDashboard/viewstudentregistration.dart';
 
-class AdminDashboard extends StatefulWidget {
-  const AdminDashboard({super.key});
+class MapAdmin extends StatefulWidget {
+  const MapAdmin({super.key});
 
   @override
-  _AdminDashboardState createState() => _AdminDashboardState();
+  _MapAdminState createState() => _MapAdminState();
 }
 
-class _AdminDashboardState extends State<AdminDashboard> {
+class _MapAdminState extends State<MapAdmin> {
   // ignore: unused_field
   late GoogleMapController _mapController;
   final LatLng _initialLocation =
@@ -27,8 +27,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   void _navigateToSettings() {
     // Navigate to the settings screen
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SettingsScreen()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const SettingsScreen()));
   }
 
   void _navigateToDrivers() {
@@ -39,14 +39,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   void _navigateToParents() {
     // Navigate to the parent screen
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ParentScreen()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const ParentRegistrations()));
   }
 
   void _navigateToStudents() {
     // Navigate to the student screen
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => StudentScreen()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const StudentRegistration()));
   }
 
   void _logout() async {

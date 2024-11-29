@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:bus/adminDashboard/admin_dashboard.dart';
+import 'package:bus/adminDashboard/map.dart';
 import 'package:bus/parentDashboard/parent_dashboard.dart';
 import 'package:bus/registration_screen.dart';
 import 'package:bus/forgotpassword.dart';
@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
             if (userType == "Administrator") {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const AdminDashboard()),
+                MaterialPageRoute(builder: (context) => const MapAdmin()),
               );
             } else if (userType == "Parent") {
               Navigator.pushReplacement(
