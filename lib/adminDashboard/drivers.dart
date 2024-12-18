@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bus/adminDashboard/adddriver.dart';
 
 class DriverScreen extends StatelessWidget {
-  const DriverScreen({Key? key}) : super(key: key);
+  const DriverScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +112,7 @@ class DriverScreen extends StatelessWidget {
 class SectionTitle extends StatelessWidget {
   final String title;
 
-  const SectionTitle({Key? key, required this.title}) : super(key: key);
+  const SectionTitle({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -131,13 +131,13 @@ class DriverCard extends StatelessWidget {
   final Color statusColor;
 
   const DriverCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.licenseNumber,
     required this.dateAdded,
     required this.status,
     required this.statusColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

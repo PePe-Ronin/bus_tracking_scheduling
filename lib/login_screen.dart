@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:bus/adminDashboard/map.dart';
-import 'package:bus/parentDashboard/parent_dashboard.dart';
+import 'package:bus/adminDashboard/adminDashboard.dart';
+import 'package:bus/parentDashboard/parentDashboard.dart';
 import 'package:bus/registration_screen.dart';
 import 'package:bus/forgotpassword.dart';
-import 'package:bus/studentsDashboard/student_dashboard.dart';
-import 'package:bus/driverDashboard/driver_dashboard.dart';
+import 'package:bus/studentsDashboard/studentDashboard.dart';
+import 'package:bus/driverDashboard/driverDashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -37,7 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
               .collection('users')
               .doc(user.uid)
               .get();
-
+          DocumentSnapshot driverDoc = await FirebaseFirestore.instance
+              .collection('drivers')
+              .doc(user.uid)
+              .get();
+          print("Driver document exists: ${driverDoc.exists}");
           if (userDoc.exists) {
             String userType = userDoc['userType'];
 
@@ -50,25 +54,29 @@ class _LoginScreenState extends State<LoginScreen> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const ParentDashboard()),
+                    builder: (context) =>
+                        ParentDashboard(email: _emailController.text)),
               );
             } else if (userType == "Student") {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const StudentDashboard()),
-              );
-            } else if (userType == "Driver") {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const DriverDashboard()),
+                    builder: (context) =>
+                        StudentDashboard(email: _emailController.text)),
               );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Unknown user type')),
               );
             }
+          } else if (driverDoc.exists) {
+            print("Driver document data: ${driverDoc.data()}");
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      driverDashboard(email: _emailController.text)),
+            );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('User data not found')),

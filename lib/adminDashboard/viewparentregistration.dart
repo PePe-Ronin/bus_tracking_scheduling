@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ParentRegistrations extends StatelessWidget {
-  const ParentRegistrations({Key? key}) : super(key: key);
+  const ParentRegistrations({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,14 +41,11 @@ class ParentRegistrations extends StatelessWidget {
                       final student = students[index];
                       final name =
                           "${student['firstName']} ${student['middleName']} ${student['lastName']}";
-                      final grade =
-                          "${student['gradeLevel']} - ${student['strand']}";
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: RegistrationCard(
                           name: name,
-                          grade: grade,
                           status: 'Pending',
                           onApprove: () async {
                             try {
@@ -119,7 +116,6 @@ class ParentRegistrations extends StatelessWidget {
                       final user = approvedUsers[index];
                       final name =
                           "${user['firstName']} ${user['middleName']} ${user['lastName']}";
-                      final grade = "${user['gradeLevel']} - ${user['strand']}";
                       final approvedDate =
                           (user['approvedDate'] as Timestamp?)?.toDate();
                       final formattedApprovedDate = approvedDate != null
@@ -130,7 +126,6 @@ class ParentRegistrations extends StatelessWidget {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: ApprovedCard(
                           name: name,
-                          grade: grade,
                           approvedDate: formattedApprovedDate,
                         ),
                       );
@@ -149,7 +144,7 @@ class ParentRegistrations extends StatelessWidget {
 class SectionTitle extends StatelessWidget {
   final String title;
 
-  const SectionTitle({Key? key, required this.title}) : super(key: key);
+  const SectionTitle({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -162,19 +157,17 @@ class SectionTitle extends StatelessWidget {
 
 class RegistrationCard extends StatelessWidget {
   final String name;
-  final String grade;
   final String status;
   final VoidCallback onApprove;
   final VoidCallback onReject;
 
   const RegistrationCard({
-    Key? key,
+    super.key,
     required this.name,
-    required this.grade,
     required this.status,
     required this.onApprove,
     required this.onReject,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -190,8 +183,6 @@ class RegistrationCard extends StatelessWidget {
               name,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 4),
-            Text(grade, style: const TextStyle(fontSize: 14)),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -236,15 +227,13 @@ class RegistrationCard extends StatelessWidget {
 
 class ApprovedCard extends StatelessWidget {
   final String name;
-  final String grade;
   final String approvedDate;
 
   const ApprovedCard({
-    Key? key,
+    super.key,
     required this.name,
-    required this.grade,
     required this.approvedDate,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -260,15 +249,13 @@ class ApprovedCard extends StatelessWidget {
               name,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 4),
-            Text(grade, style: const TextStyle(fontSize: 14)),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Approved',
-                  style: const TextStyle(color: Colors.green, fontSize: 14),
+                  style: TextStyle(color: Colors.green, fontSize: 14),
                 ),
                 Text(
                   'Approved on: $approvedDate',

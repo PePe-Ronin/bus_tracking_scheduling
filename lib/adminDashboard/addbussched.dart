@@ -1,4 +1,4 @@
-import 'package:bus/adminDashboard/map.dart';
+import 'package:bus/adminDashboard/adminDashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -116,7 +116,7 @@ class _BusSchedulerState extends State<BusScheduler> {
         const SnackBar(content: Text('Bus schedule added successfully!')),
       );
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MapAdmin()));
+          context, MaterialPageRoute(builder: (context) => const MapAdmin()));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saving schedule: $e')),
@@ -235,8 +235,8 @@ class _BusSchedulerState extends State<BusScheduler> {
                     onPressed: _submitBusSchedule,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
                     ),
                     child: const Text(
                       "Submit",

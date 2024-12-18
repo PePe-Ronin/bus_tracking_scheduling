@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class StudentRegistration extends StatelessWidget {
-  const StudentRegistration({Key? key}) : super(key: key);
+  const StudentRegistration({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +150,7 @@ class StudentRegistration extends StatelessWidget {
 class SectionTitle extends StatelessWidget {
   final String title;
 
-  const SectionTitle({Key? key, required this.title}) : super(key: key);
+  const SectionTitle({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -169,13 +169,13 @@ class RegistrationCard extends StatelessWidget {
   final VoidCallback onReject;
 
   const RegistrationCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.grade,
     required this.status,
     required this.onApprove,
     required this.onReject,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -241,11 +241,11 @@ class ApprovedCard extends StatelessWidget {
   final String approvedDate;
 
   const ApprovedCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.grade,
     required this.approvedDate,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -267,9 +267,9 @@ class ApprovedCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Approved',
-                  style: const TextStyle(color: Colors.green, fontSize: 14),
+                  style: TextStyle(color: Colors.green, fontSize: 14),
                 ),
                 Text(
                   'Approved on: $approvedDate',

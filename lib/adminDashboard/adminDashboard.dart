@@ -70,7 +70,7 @@ class _MapAdminState extends State<MapAdmin> {
 
   void _navigateToDrivers() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => DriverScreen()));
+        context, MaterialPageRoute(builder: (context) => const DriverScreen()));
   }
 
   void _navigateToParents() {
@@ -98,7 +98,7 @@ class _MapAdminState extends State<MapAdmin> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-              BusScheduler()), // Replace with your add route screen
+              const BusScheduler()), // Replace with your add route screen
     );
   }
 
@@ -249,7 +249,8 @@ class _MapAdminState extends State<MapAdmin> {
                   _navigateToAddRoute, // Navigate to the Add Route screen
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
               ),
               child: const Text(
                 'Add Route',
@@ -269,11 +270,11 @@ class RouteCard extends StatelessWidget {
   final String busNumber;
 
   const RouteCard({
-    Key? key,
+    super.key,
     required this.routeName,
     required this.driver,
     required this.busNumber,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

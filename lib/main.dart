@@ -1,5 +1,5 @@
 import 'package:bus/adminDashboard/drivers.dart';
-import 'package:bus/adminDashboard/map.dart';
+import 'package:bus/adminDashboard/adminDashboard.dart';
 import 'package:bus/login_screen.dart';
 import 'package:bus/registration_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 import 'package:bus/adminDashboard/addbussched.dart';
 import 'package:bus/adminDashboard/adddriver.dart';
+import 'package:bus/parentDashboard/parentDashboard.dart';
 import 'package:bus/adminDashboard/viewstudentregistration.dart';
+import 'package:bus/studentsDashboard/studentRegistration.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MapAdmin(),
+      home: const LoginScreen(),
     );
   }
 }
