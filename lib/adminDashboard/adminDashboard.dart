@@ -1,4 +1,4 @@
-import 'package:bus/adminDashboard/addbussched.dart';
+import 'package:bus/adminDashboard/addroute.dart';
 import 'package:bus/adminDashboard/viewparentregistration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:bus/adminDashboard/settings.dart';
 import 'package:bus/adminDashboard/drivers.dart';
 import 'package:bus/adminDashboard/viewstudentregistration.dart';
-import 'package:permission_handler/permission_handler.dart'; // Add this import
+import 'package:permission_handler/permission_handler.dart';
+import 'package:bus/adminDashboard/addbus.dart';
 
 class MapAdmin extends StatefulWidget {
   const MapAdmin({super.key});
@@ -73,6 +74,11 @@ class _MapAdminState extends State<MapAdmin> {
         context, MaterialPageRoute(builder: (context) => const DriverScreen()));
   }
 
+  void _navigateToBus() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const addBus()));
+  }
+
   void _navigateToParents() {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => const ParentRegistrations()));
@@ -98,7 +104,7 @@ class _MapAdminState extends State<MapAdmin> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-              const BusScheduler()), // Replace with your add route screen
+              const Addroute()), // Replace with your add route screen
     );
   }
 
@@ -126,6 +132,14 @@ class _MapAdminState extends State<MapAdmin> {
                 'Hello Admin',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.directions_bus),
+              title: const Text('Buses'),
+              onTap: () {
+                Navigator.pop(context);
+                _navigateToBus();
+              },
             ),
             ListTile(
               leading: const Icon(Icons.directions_bus),

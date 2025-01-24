@@ -12,6 +12,7 @@ class AddDriver extends StatefulWidget {
 
 class _AddDriverPageState extends State<AddDriver> {
   // Controllers for text fields
+  final TextEditingController driverID = TextEditingController();
   final TextEditingController driverLastName = TextEditingController();
   final TextEditingController driverFirstName = TextEditingController();
   final TextEditingController driverMiddleName = TextEditingController();
@@ -38,6 +39,7 @@ class _AddDriverPageState extends State<AddDriver> {
   Future<void> saveDriverToFirebase() async {
     // Get the values from the text controllers
     final driverData = {
+      'driverID': driverID.text,
       'lastName': driverLastName.text,
       'firstName': driverFirstName.text,
       'middleName': driverMiddleName.text,
@@ -141,6 +143,7 @@ class _AddDriverPageState extends State<AddDriver> {
                 ),
               ),
               const SizedBox(height: 20),
+              _buildTextField('Employee ID', driverID),
               _buildTextField('Last Name', driverLastName),
               _buildTextField('First Name', driverFirstName),
               _buildTextField('Middle Name', driverMiddleName),

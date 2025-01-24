@@ -166,8 +166,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(
         recorder,
-        Rect.fromPoints(
-            Offset(0, 0), Offset(newWidth.toDouble(), newHeight.toDouble())));
+        Rect.fromPoints(const Offset(0, 0),
+            Offset(newWidth.toDouble(), newHeight.toDouble())));
 
     // Create a Paint object
     final Paint paint = Paint();

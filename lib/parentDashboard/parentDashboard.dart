@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:bus/login_screen.dart';
 import 'package:bus/parentDashboard/settings.dart';
-import 'package:bus/parentDashboard/studentprofile.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';

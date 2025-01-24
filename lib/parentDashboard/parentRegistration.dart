@@ -1,6 +1,5 @@
 import 'package:bus/parentDashboard/parentDashboard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -20,6 +19,7 @@ class _ParentConRegState extends State<ParentConReg> {
   final _contactNumber = TextEditingController();
   final _address = TextEditingController();
   final _studentID = TextEditingController();
+  final _email = TextEditingController();
 
   LatLng? _selectedLocation;
   bool _isStudentIDValid = true;
@@ -109,6 +109,7 @@ class _ParentConRegState extends State<ParentConReg> {
           'studentID': _studentID.text,
           'contactNumber': _contactNumber.text,
           'address': _address.text,
+          'email': _email.text,
         });
 
         ScaffoldMessenger.of(context).showSnackBar(

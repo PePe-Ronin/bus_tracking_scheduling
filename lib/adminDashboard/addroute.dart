@@ -3,23 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class BusScheduler extends StatefulWidget {
-  const BusScheduler({super.key});
+class Addroute extends StatefulWidget {
+  const Addroute({super.key});
 
   @override
-  State<BusScheduler> createState() => _BusSchedulerState();
+  State<Addroute> createState() => _AddrouteState();
 }
 
-class _BusSchedulerState extends State<BusScheduler> {
+class _AddrouteState extends State<Addroute> {
   String? _selectedDriver;
   List<String> _drivers = [];
   bool _isLoading = true;
 
-  final TextEditingController _routeNameController = TextEditingController();
-  final TextEditingController _busNumberController = TextEditingController();
-  final TextEditingController _startingPointController =
-      TextEditingController();
-  final TextEditingController _endPointController = TextEditingController();
+  final TextEditingController _routeID = TextEditingController();
+  final TextEditingController _routeName = TextEditingController();
+  final TextEditingController _busID = TextEditingController();
+  final TextEditingController _startingPoint = TextEditingController();
+  final TextEditingController _endPoint = TextEditingController();
 
   LatLng? _startingPointLocation;
   LatLng? _endPointLocation;
@@ -74,11 +74,11 @@ class _BusSchedulerState extends State<BusScheduler> {
       setState(() {
         if (isStartingPoint) {
           _startingPointLocation = selectedLocation;
-          _startingPointController.text =
+          _startingPoint.text =
               '${selectedLocation.latitude}, ${selectedLocation.longitude}';
         } else {
           _endPointLocation = selectedLocation;
-          _endPointController.text =
+          _endPoint.text =
               '${selectedLocation.latitude}, ${selectedLocation.longitude}';
         }
       });
@@ -86,8 +86,8 @@ class _BusSchedulerState extends State<BusScheduler> {
   }
 
   Future<void> _submitBusSchedule() async {
-    if (_routeNameController.text.isEmpty ||
-        _busNumberController.text.isEmpty ||
+    if (_routeID.text.isEmpty ||
+        _busID.text.isEmpty ||
         _selectedDriver == null ||
         _startingPointLocation == null ||
         _endPointLocation == null) {
@@ -99,8 +99,9 @@ class _BusSchedulerState extends State<BusScheduler> {
 
     try {
       await FirebaseFirestore.instance.collection('routes').add({
-        'routeName': _routeNameController.text,
-        'busNumber': _busNumberController.text,
+        'routeID': _routeID.text,
+        'routeName': _routeName.text,
+        'busNumber': _busID.text,
         'driver': _selectedDriver,
         'startingPoint': {
           'latitude': _startingPointLocation!.latitude,
@@ -149,7 +150,7 @@ class _BusSchedulerState extends State<BusScheduler> {
                       child: Column(
                         children: [
                           TextField(
-                            controller: _routeNameController,
+                            controller: _routeID,
                             decoration: InputDecoration(
                               labelText: "Route Name",
                               border: OutlineInputBorder(
@@ -159,7 +160,7 @@ class _BusSchedulerState extends State<BusScheduler> {
                           ),
                           const SizedBox(height: 16),
                           TextField(
-                            controller: _busNumberController,
+                            controller: _busID,
                             decoration: InputDecoration(
                               labelText: "Bus Number",
                               border: OutlineInputBorder(
@@ -202,7 +203,7 @@ class _BusSchedulerState extends State<BusScheduler> {
                       child: Column(
                         children: [
                           TextField(
-                            controller: _startingPointController,
+                            controller: _startingPoint,
                             readOnly: true,
                             onTap: () => _openMapForLocation(true),
                             decoration: InputDecoration(
@@ -215,7 +216,7 @@ class _BusSchedulerState extends State<BusScheduler> {
                           ),
                           const SizedBox(height: 16),
                           TextField(
-                            controller: _endPointController,
+                            controller: _endPoint,
                             readOnly: true,
                             onTap: () => _openMapForLocation(false),
                             decoration: InputDecoration(
