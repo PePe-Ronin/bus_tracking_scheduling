@@ -1,4 +1,5 @@
 import 'package:bus/adminDashboard/addroute.dart';
+import 'package:bus/adminDashboard/addstops.dart';
 import 'package:bus/adminDashboard/viewparentregistration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,6 +8,7 @@ import 'package:bus/login_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:bus/adminDashboard/settings.dart';
 import 'package:bus/adminDashboard/drivers.dart';
+import 'package:bus/adminDashboard/addschedules.dart';
 import 'package:bus/adminDashboard/viewstudentregistration.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:bus/adminDashboard/addbus.dart';
@@ -74,9 +76,19 @@ class _MapAdminState extends State<MapAdmin> {
         context, MaterialPageRoute(builder: (context) => const DriverScreen()));
   }
 
+  void _navigateToStops() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const Addstops()));
+  }
+
   void _navigateToBus() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const addBus()));
+  }
+
+  void _navigateToRoutes() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const Addroute()));
   }
 
   void _navigateToParents() {
@@ -87,6 +99,11 @@ class _MapAdminState extends State<MapAdmin> {
   void _navigateToStudents() {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => const StudentRegistration()));
+  }
+
+  void _navigateToSchedules() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const Addschedules()));
   }
 
   void _logout() async {
@@ -139,6 +156,22 @@ class _MapAdminState extends State<MapAdmin> {
               onTap: () {
                 Navigator.pop(context);
                 _navigateToBus();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.directions_bus),
+              title: const Text('Routes'),
+              onTap: () {
+                Navigator.pop(context);
+                _navigateToRoutes();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.directions_bus),
+              title: const Text('Stops'),
+              onTap: () {
+                Navigator.pop(context);
+                _navigateToStops();
               },
             ),
             ListTile(

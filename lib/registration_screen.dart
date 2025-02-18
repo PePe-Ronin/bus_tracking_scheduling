@@ -92,7 +92,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 : null, // If location is not selected, save null
           };
           await _firestore
-              .collection('students')
+              .collection('users')
               .doc(userCredential.user!.uid)
               .set(userData);
         } else if (_userType == 'Parent') {

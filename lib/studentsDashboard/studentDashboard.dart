@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:bus/login_screen.dart';
 import 'package:bus/studentsDashboard/settings.dart';
 import 'dart:ui' as ui;
+import 'package:bus/studentsDashboard/qrCodeScreen.dart';
 
 class StudentDashboard extends StatefulWidget {
   final String email;
@@ -326,19 +327,19 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(16.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Quick Actions',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -346,8 +347,15 @@ class _StudentDashboardState extends State<StudentDashboard> {
                             icon: Icons.qr_code,
                             label: 'Scan QR Code',
                             color: Colors.purple,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Qrcodescreen()),
+                              );
+                            },
                           ),
-                          QuickActionButton(
+                          const QuickActionButton(
                             icon: Icons.notifications,
                             label: 'Notifications',
                             color: Colors.orange,
@@ -370,26 +378,31 @@ class QuickActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color? color;
+  final VoidCallback? onPressed;
 
   const QuickActionButton({
     super.key,
     required this.icon,
     required this.label,
     this.color,
+    this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          backgroundColor: color ?? Colors.grey[300],
-          radius: 28,
-          child: Icon(icon, color: Colors.black),
-        ),
-        const SizedBox(height: 8),
-        Text(label),
-      ],
+    return GestureDetector(
+      onTap: onPressed,
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: color ?? Colors.grey[300],
+            radius: 28,
+            child: Icon(icon, color: Colors.black),
+          ),
+          const SizedBox(height: 8),
+          Text(label),
+        ],
+      ),
     );
   }
 }

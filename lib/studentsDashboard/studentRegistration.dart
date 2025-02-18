@@ -37,7 +37,7 @@ class _StudentConRegState extends State<StudentConReg> {
   Future<void> _loadStudentData() async {
     try {
       QuerySnapshot studentSnapshot = await FirebaseFirestore.instance
-          .collection('students')
+          .collection('users')
           .where('email', isEqualTo: widget.email)
           .get();
 
@@ -82,7 +82,7 @@ class _StudentConRegState extends State<StudentConReg> {
     } else {
       try {
         QuerySnapshot studentSnapshot = await FirebaseFirestore.instance
-            .collection('students')
+            .collection('users')
             .where('email', isEqualTo: widget.email)
             .get();
 
@@ -90,7 +90,7 @@ class _StudentConRegState extends State<StudentConReg> {
           String docId = studentSnapshot.docs.first.id;
 
           await FirebaseFirestore.instance
-              .collection('students')
+              .collection('users')
               .doc(docId)
               .update({
             'studentID': _studentID.text,

@@ -85,7 +85,7 @@ class _AddrouteState extends State<Addroute> {
     }
   }
 
-  Future<void> _submitBusSchedule() async {
+  Future<void> _submitBusRoutes() async {
     if (_routeID.text.isEmpty ||
         _busID.text.isEmpty ||
         _selectedDriver == null ||
@@ -114,13 +114,13 @@ class _AddrouteState extends State<Addroute> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bus schedule added successfully!')),
+        const SnackBar(content: Text('Bus Route added successfully!')),
       );
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const MapAdmin()));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving schedule: $e')),
+        SnackBar(content: Text('Error saving route: $e')),
       );
     }
   }
@@ -129,7 +129,7 @@ class _AddrouteState extends State<Addroute> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Bus Schedule"),
+        title: const Text("Add Bus Route"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -233,7 +233,7 @@ class _AddrouteState extends State<Addroute> {
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
-                    onPressed: _submitBusSchedule,
+                    onPressed: _submitBusRoutes,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       padding: const EdgeInsets.symmetric(
