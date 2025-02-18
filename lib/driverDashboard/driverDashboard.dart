@@ -7,6 +7,9 @@ import 'package:bus/driverDashboard/driverprofile.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'dart:async';
 
 class driverDashboard extends StatefulWidget {
   final String email;
@@ -17,6 +20,14 @@ class driverDashboard extends StatefulWidget {
 }
 
 class _driverDashboardState extends State<driverDashboard> {
+  @override
+  void initState() {
+    super.initState();
+    _loadCustomMarker(); // Load custom marker at initialization
+    _fetchStudentData();
+    _startDateTimeUpdater();
+  }
+
   String? firstName;
   String? middleName;
   String? lastName;
@@ -24,6 +35,24 @@ class _driverDashboardState extends State<driverDashboard> {
   String? timeBoarded;
   String? timeDropped;
   String? notificationMessage;
+  String currentDateTime =
+      DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+  Timer? _timer;
+
+  void _startDateTimeUpdater() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        currentDateTime =
+            DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   String? _generateNotification() {
     print("Time Boarded: $timeBoarded");
@@ -55,13 +84,6 @@ class _driverDashboardState extends State<driverDashboard> {
 
   final Set<Marker> _markers = {};
   BitmapDescriptor? customIcon;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCustomMarker(); // Load custom marker at initialization
-    _fetchStudentData();
-  }
 
   // Load custom marker from assets
   Future<void> _loadCustomMarker() async {
@@ -202,240 +224,148 @@ class _driverDashboardState extends State<driverDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.indigo,
-          title: const Text(
-            'Parent Dashboard',
-            style: TextStyle(color: Colors.white),
-          ),
-          iconTheme: const IconThemeData(
-            color: Colors.white,
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
+        title: const Text(
+          'Driver Dashboard',
+          style: TextStyle(color: Colors.white),
         ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.deepPurple),
+              child: Text(
+                'Hello Driver',
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Account Settings'),
+              onTap: () {
+                Navigator.pop(context);
+                _navigateToAccountSettings();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () {
+                Navigator.pop(context);
+                _logout();
+              },
+            ),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: SingleChildScrollView(
+          child: Column(
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(color: Colors.indigo),
-                child: Text(
-                  'Hello Parent',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
+              SizedBox(height: 20),
+              Card(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Live Tracking",
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            "View Map",
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.indigo,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Container(
+                        height: 120,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              // ListTile(
-              //   leading: const Icon(Icons.airline_seat_recline_normal_outlined),
-              //   title: const Text('Students'),
-              //   onTap: () {
-              //     Navigator.pop(context);
-              //     _navigateToStudents();
-              //   },
-              // ),
-              ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text('Account Settings'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _navigateToAccountSettings();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Logout'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _logout();
-                },
+              SizedBox(height: 50),
+              Card(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Passengers",
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Number of Student",
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          Text(
+                            "23/25",
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.teal,
+                            ),
+                          ),
+                          Container(
+                            width: 300,
+                            height: 300,
+                            child: QrImageView(
+                              data: currentDateTime,
+                              version: QrVersions.auto,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
-          ),
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Profile Card
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  elevation: 4.0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const CircleAvatar(
-                              radius: 30,
-                              backgroundImage: AssetImage(
-                                'assets/student.png', // Placeholder for profile picture
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '$firstName $middleName $lastName', // Dynamic student name
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  gradeSection, // Dynamic grade section
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Google Map replaces the image
-                        SizedBox(
-                          height: 200.0, // Adjust height as needed
-                          child: GoogleMap(
-                            initialCameraPosition: _initialPosition,
-                            onMapCreated: (GoogleMapController controller) {
-                              _controller = controller;
-                            },
-                            markers: _markers,
-                          ),
-                        ),
-
-                        const SizedBox(height: 8),
-                        const Row(
-                          children: [
-                            Icon(Icons.location_on, color: Colors.indigo),
-                            SizedBox(width: 4),
-                            Text(
-                              'Currently at: School Bus',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          'Last updated: 2 minutes ago',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Today's Status
-                const Text(
-                  "Today's Status",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Card(
-                        color: Colors.teal,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              const Icon(Icons.directions_bus,
-                                  color: Colors.white),
-                              const SizedBox(height: 8),
-                              const Text(
-                                'Boarded Bus',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              // Display the timeBoarded here
-                              Text(
-                                timeBoarded ?? 'Not Available',
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Card(
-                        color: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              const Icon(Icons.directions_bus,
-                                  color: Colors.white),
-                              const SizedBox(height: 8),
-                              const Text(
-                                'Arrived at School',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              Text(
-                                timeDropped ?? 'Not Available',
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Recent Notifications
-                const Text(
-                  'Recent Notifications',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                notificationMessage != null
-                    ? Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        elevation: 2.0,
-                        child: ListTile(
-                          leading: const Icon(Icons.notifications,
-                              color: Colors.teal),
-                          title: Text(notificationMessage!),
-                        ),
-                      )
-                    : Container(),
-                const SizedBox(height: 16),
-              ],
-            ),
           ),
         ),
       ),

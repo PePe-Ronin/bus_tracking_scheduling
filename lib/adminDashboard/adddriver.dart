@@ -20,7 +20,7 @@ class _AddDriverPageState extends State<AddDriver> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController licenseNumberController = TextEditingController();
   final TextEditingController licenseExpiryController = TextEditingController();
-  final String password = "stiibus2024";
+  final String passwordController = "stiibus2024";
   final _auth = FirebaseAuth.instance;
 
   @override
@@ -45,7 +45,7 @@ class _AddDriverPageState extends State<AddDriver> {
       'middleName': driverMiddleName.text,
       'phoneNumber': phoneNumberController.text,
       'email': emailController.text,
-      'password': password,
+      'password': passwordController,
       'licenseNumber': licenseNumberController.text,
       'licenseExpiryDate': licenseExpiryController.text,
       'status': "Offline",
@@ -57,11 +57,15 @@ class _AddDriverPageState extends State<AddDriver> {
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: emailController.text,
-        password: password,
+        password: passwordController,
       );
 
       // Save the data to Firestore
-      await FirebaseFirestore.instance.collection('users').add(driverData);
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set(driverData);
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Driver details saved successfully!')),

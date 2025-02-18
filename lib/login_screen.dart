@@ -37,11 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
               .collection('users')
               .doc(user.uid)
               .get();
-          DocumentSnapshot driverDoc = await FirebaseFirestore.instance
-              .collection('drivers')
-              .doc(user.uid)
-              .get();
-          print("Driver document exists: ${driverDoc.exists}");
           if (userDoc.exists) {
             String userType = userDoc['userType'];
 
@@ -64,19 +59,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     builder: (context) =>
                         StudentDashboard(email: _emailController.text)),
               );
+            } else if (userType == "Driver") {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        driverDashboard(email: _emailController.text)),
+              );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Unknown user type')),
               );
             }
-          } else if (driverDoc.exists) {
-            print("Driver document data: ${driverDoc.data()}");
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      driverDashboard(email: _emailController.text)),
-            );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('User data not found')),

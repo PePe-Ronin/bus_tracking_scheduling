@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 
-void main() {
-  runApp(const Qrcodescreen());
-}
-
 class Qrcodescreen extends StatelessWidget {
   const Qrcodescreen({super.key});
 
@@ -63,6 +59,8 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       setState(() {
         scannedData = scanData.code;
       });
+      // Automatically resume scanning for new QR codes
+      controller.resumeCamera();
     });
   }
 

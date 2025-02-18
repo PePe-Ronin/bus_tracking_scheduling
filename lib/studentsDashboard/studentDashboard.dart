@@ -351,7 +351,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Qrcodescreen()),
+                                    builder: (context) =>
+                                        const QRScannerScreen()),
                               );
                             },
                           ),
