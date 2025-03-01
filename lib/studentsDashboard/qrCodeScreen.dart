@@ -32,22 +32,24 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       body: Column(
         children: [
           Expanded(
+            flex: 1,
+            child: Center(
+              child: Text(
+                scannedData == null
+                    ? "Attendance: No QR Code detected"
+                    : "Attendance: $scannedData",
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          Expanded(
             flex: 5,
             child: QRView(
               key: qrKey,
               onQRViewCreated: _onQRViewCreated,
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: Text(
-                scannedData ?? "Scan a QR code",
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-          )
         ],
       ),
     );
