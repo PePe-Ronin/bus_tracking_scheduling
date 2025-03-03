@@ -14,7 +14,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:bus/adminDashboard/addbus.dart';
 
 class MapAdmin extends StatefulWidget {
-  const MapAdmin({super.key});
+  final String adminEmail;
+  final String adminPassword;
+  const MapAdmin(
+      {super.key, required this.adminEmail, required this.adminPassword});
 
   @override
   _MapAdminState createState() => _MapAdminState();
@@ -83,12 +86,22 @@ class _MapAdminState extends State<MapAdmin> {
 
   void _navigateToBus() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const addBus()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => addBus(
+                  adminEmail: widget.adminEmail,
+                  adminPassword: widget.adminPassword,
+                )));
   }
 
   void _navigateToRoutes() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const Addroute()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => Addroute(
+                  adminEmail: widget.adminEmail,
+                  adminPassword: widget.adminPassword,
+                )));
   }
 
   void _navigateToParents() {
@@ -120,8 +133,10 @@ class _MapAdminState extends State<MapAdmin> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              const Addroute()), // Replace with your add route screen
+          builder: (context) => Addroute(
+                adminEmail: widget.adminEmail,
+                adminPassword: widget.adminPassword,
+              )), // Replace with your add route screen
     );
   }
 

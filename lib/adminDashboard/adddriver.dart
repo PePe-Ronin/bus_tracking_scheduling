@@ -63,7 +63,7 @@ class _AddDriverPageState extends State<AddDriver> {
       // Save the data to Firestore
 
       await FirebaseFirestore.instance
-          .collection('users')
+          .collection('driver')
           .doc(userCredential.user!.uid)
           .set(driverData);
       // Show success message
@@ -152,7 +152,7 @@ class _AddDriverPageState extends State<AddDriver> {
               _buildTextField('First Name', driverFirstName),
               _buildTextField('Middle Name', driverMiddleName),
               _buildTextField(
-                'Phone Number',
+                'Contact Number',
                 phoneNumberController,
                 keyboardType: TextInputType.phone,
               ),

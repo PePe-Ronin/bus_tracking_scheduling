@@ -22,21 +22,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   String? _userType;
   final _emailController = TextEditingController();
-  final _studentID = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _lastName = TextEditingController();
-  final _firstName = TextEditingController();
-  final _middleName = TextEditingController();
-  final _section = TextEditingController();
-  final _contactNumber = TextEditingController();
-  final _address = TextEditingController();
-  final _name = TextEditingController();
-  final _confirmPass = TextEditingController();
-
-  String? _gradeLevel;
-  String? _strand;
-  LatLng? _selectedLocation;
 
   bool _isPasswordHidden = true;
   bool _isConfirmPasswordHidden = true;
@@ -70,79 +57,34 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         // Save data to respective collections
         if (_userType == 'Student') {
           final userData = {
-            'userType': _userType ?? '', // Provide default value if null
-            'email': _emailController.text.isEmpty
+            'userType': _userType ?? '',
+            'email':
+                _emailController.text.isEmpty ? null : _emailController.text,
+            'password': _passwordController.text.isEmpty
                 ? null
-                : _emailController.text, // If empty, set as null
-            'lastName':
-                _lastName.text.isEmpty ? null : _lastName, // Check if empty
-            'firstName':
-                _firstName.text.isEmpty ? null : _firstName, // Check if empty
-            'middleName':
-                _middleName.text.isEmpty ? null : _middleName, // Check if empty
-            'section':
-                _section.text.isEmpty ? null : _section, // Check if empty
-            'gradeLevel': _gradeLevel ?? '',
-            'strand': _strand ?? '',
-            'contactNumber': _contactNumber.text.isEmpty
-                ? null
-                : _contactNumber, // Check if empty
-            'address': _selectedLocation != null
-                ? '${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}' // Save coordinates if location is selected
-                : null, // If location is not selected, save null
+                : _passwordController.text,
           };
           await _firestore
-              .collection('users')
+              .collection('student')
               .doc(userCredential.user!.uid)
               .set(userData);
         } else if (_userType == 'Parent') {
           final userData = {
-            'userType': _userType ?? '', // Provide default value if null
-            'email': _emailController.text.isEmpty
+            'userType': _userType ?? '',
+            'email':
+                _emailController.text.isEmpty ? null : _emailController.text,
+            'password': _passwordController.text.isEmpty
                 ? null
-                : _emailController.text, // If empty, set as null
-            'lastName':
-                _lastName.text.isEmpty ? null : _lastName, // Check if empty
-            'firstName':
-                _firstName.text.isEmpty ? null : _firstName, // Check if empty
-            'middleName': _middleName.text.isEmpty ? null : _middleName,
-            'studentID': _studentID.text.isEmpty ? null : _studentID,
-            'contactNumber': _contactNumber.text.isEmpty
-                ? null
-                : _contactNumber, // Check if empty
-            'address': _selectedLocation != null
-                ? '${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}' // Save coordinates if location is selected
-                : null, // If location is not selected, save null
+                : _passwordController.text,
           };
           await _firestore
-              .collection('parents')
-              .doc(userCredential.user!.uid)
-              .set(userData);
-        } else if (_userType == 'Admin') {
-          final userData = {
-            'userType': _userType ?? '', // Provide default value if null
-            'email': _emailController.text.isEmpty
-                ? null
-                : _emailController.text, // If empty, set as null
-            'name': _lastName.text.isEmpty ? null : _lastName, // Check if empty
-            'number': _contactNumber.text.isEmpty
-                ? null
-                : _contactNumber, // Check if empty
-            'confirmPass': _confirmPass.text.isEmpty ? null : _confirmPass.text,
-          };
-          await _firestore
-              .collection('users')
+              .collection('parent')
               .doc(userCredential.user!.uid)
               .set(userData);
         }
 
         // Navigate to the correct dashboard with email passed
-        if (_userType == 'Admin') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MapAdmin()),
-          );
-        } else if (_userType == 'Student') {
+        if (_userType == 'Student') {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(

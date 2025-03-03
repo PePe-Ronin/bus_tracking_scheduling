@@ -17,9 +17,9 @@ class _StudentConRegState extends State<StudentConReg> {
   final _lastName = TextEditingController();
   final _firstName = TextEditingController();
   final _middleName = TextEditingController();
-  final _gradeLevel = TextEditingController();
+  String? _gradeLevel;
   final _section = TextEditingController();
-  final _strand = TextEditingController();
+  String? _strand;
   final _contactNumber = TextEditingController();
   final _address = TextEditingController();
   final _email = TextEditingController();
@@ -31,13 +31,14 @@ class _StudentConRegState extends State<StudentConReg> {
   void initState() {
     super.initState();
     _loadStudentData();
+    _email.text = widget.email;
   }
 
   // Fetch the student's existing data based on email
   Future<void> _loadStudentData() async {
     try {
       QuerySnapshot studentSnapshot = await FirebaseFirestore.instance
-          .collection('users')
+          .collection('student')
           .where('email', isEqualTo: widget.email)
           .get();
 
@@ -49,9 +50,9 @@ class _StudentConRegState extends State<StudentConReg> {
           _lastName.text = data['lastName'];
           _firstName.text = data['firstName'];
           _middleName.text = data['middleName'];
-          _gradeLevel.text = data['gradeLevel'];
+          _gradeLevel = data['gradeLevel'];
           _section.text = data['section'];
-          _strand.text = data['strand'];
+          _strand = data['strand'];
           _contactNumber.text = data['contactNumber'];
           _address.text = data['address'];
           _email.text = data['email'];
@@ -69,9 +70,7 @@ class _StudentConRegState extends State<StudentConReg> {
   Future<void> _saveStudentData() async {
     if (_lastName.text.isEmpty ||
         _firstName.text.isEmpty ||
-        _gradeLevel.text.isEmpty ||
         _section.text.isEmpty ||
-        _strand.text.isEmpty ||
         _contactNumber.text.isEmpty ||
         _address.text.isEmpty ||
         _email.text.isEmpty ||
@@ -82,7 +81,7 @@ class _StudentConRegState extends State<StudentConReg> {
     } else {
       try {
         QuerySnapshot studentSnapshot = await FirebaseFirestore.instance
-            .collection('users')
+            .collection('student')
             .where('email', isEqualTo: widget.email)
             .get();
 
@@ -90,16 +89,16 @@ class _StudentConRegState extends State<StudentConReg> {
           String docId = studentSnapshot.docs.first.id;
 
           await FirebaseFirestore.instance
-              .collection('users')
+              .collection('student')
               .doc(docId)
               .update({
             'studentID': _studentID.text,
             'lastName': _lastName.text,
             'firstName': _firstName.text,
             'middleName': _middleName.text,
-            'gradeLevel': _gradeLevel.text,
+            'gradeLevel': _gradeLevel,
             'section': _section.text,
-            'strand': _strand.text,
+            'strand': _strand,
             'contactNumber': _contactNumber.text,
             'address': _address.text,
             'email': _email.text,
@@ -173,11 +172,8 @@ class _StudentConRegState extends State<StudentConReg> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("Student Information"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -191,12 +187,101 @@ class _StudentConRegState extends State<StudentConReg> {
               _buildTextField(_lastName, "Last Name"),
               _buildTextField(_firstName, "First Name"),
               _buildTextField(_middleName, "Middle Name"),
-              _buildTextField(_gradeLevel, "Grade Level"),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                )),
+                value: _gradeLevel,
+                hint: const Text('Select Grade Level'),
+                isExpanded: true,
+                items: const [
+                  DropdownMenuItem(
+                    value: 'Grade 7',
+                    child: Text('Grade 7'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Grade 8',
+                    child: Text('Grade 8'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Grade 9',
+                    child: Text('Grade 9'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Grade 10',
+                    child: Text('Grade 10'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Grade 11',
+                    child: Text('Grade 11'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Grade 12',
+                    child: Text('Grade 12'),
+                  ),
+                ],
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _gradeLevel = newValue;
+                  });
+                },
+                validator: (value) =>
+                    value == null ? 'Select Grade Level' : null,
+              ),
+              const SizedBox(height: 16),
               _buildTextField(_section, "Section"),
-              _buildTextField(_strand, "Strand"),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                )),
+                value: _strand,
+                hint: const Text('Select Strand'),
+                isExpanded: true,
+                items: const [
+                  DropdownMenuItem(
+                    value: 'Junior High',
+                    child: Text('Junior High'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'ABM',
+                    child: Text('ABM'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'AFA',
+                    child: Text('AFA'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'IA',
+                    child: Text('IA'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'ICT',
+                    child: Text('ICT'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'HE',
+                    child: Text('HE'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'HUMSS',
+                    child: Text('HUMSS'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'STEM',
+                    child: Text('STEM'),
+                  ),
+                ],
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _strand = newValue;
+                  });
+                },
+                validator: (value) => value == null ? 'Select Strand' : null,
+              ),
+              const SizedBox(height: 16),
               _buildTextField(_contactNumber, "Contact Number"),
-              _buildTextField(_email, "Email"),
-              _buildTextField(_stopID, "Stop ID"),
               GestureDetector(
                 onTap: _openMapForAddress,
                 child: AbsorbPointer(
@@ -212,11 +297,28 @@ class _StudentConRegState extends State<StudentConReg> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              _buildTextField(_email, "Email", readOnly: true),
+              GestureDetector(
+                onTap: _openMapForAddress,
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    controller: _stopID,
+                    decoration: InputDecoration(
+                      labelText: 'Bus Stop',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      suffixIcon: const Icon(Icons.map),
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _saveStudentData,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: const Color.fromRGBO(75, 57, 239, 1),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 ),
@@ -232,11 +334,13 @@ class _StudentConRegState extends State<StudentConReg> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label) {
+  Widget _buildTextField(TextEditingController controller, String label,
+      {bool readOnly = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextFormField(
         controller: controller,
+        readOnly: readOnly,
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(

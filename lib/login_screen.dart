@@ -43,7 +43,11 @@ class _LoginScreenState extends State<LoginScreen> {
             if (userType == "Administrator") {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const MapAdmin()),
+                MaterialPageRoute(
+                    builder: (context) => MapAdmin(
+                          adminEmail: _emailController.text,
+                          adminPassword: _passwordController.text,
+                        )),
               );
             } else if (userType == "Parent") {
               Navigator.pushReplacement(

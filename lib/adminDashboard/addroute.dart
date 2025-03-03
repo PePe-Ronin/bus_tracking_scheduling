@@ -4,7 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Addroute extends StatefulWidget {
-  const Addroute({super.key});
+  final String adminEmail;
+  final String adminPassword;
+  const Addroute(
+      {super.key, required this.adminEmail, required this.adminPassword});
 
   @override
   State<Addroute> createState() => _AddrouteState();
@@ -27,13 +30,13 @@ class _AddrouteState extends State<Addroute> {
   @override
   void initState() {
     super.initState();
-    _fetchDrivers();
+    _fetchBus();
   }
 
-  Future<void> _fetchDrivers() async {
+  Future<void> _fetchBus() async {
     try {
       QuerySnapshot snapshot =
-          await FirebaseFirestore.instance.collection('drivers').get();
+          await FirebaseFirestore.instance.collection('bus').get();
 
       List<String> fetchedDrivers = snapshot.docs.map((doc) {
         String firstName = doc['firstName'] ?? '';
@@ -102,7 +105,6 @@ class _AddrouteState extends State<Addroute> {
         'routeID': _routeID.text,
         'routeName': _routeName.text,
         'busNumber': _busID.text,
-        'driver': _selectedDriver,
         'startingPoint': {
           'latitude': _startingPointLocation!.latitude,
           'longitude': _startingPointLocation!.longitude,
@@ -117,7 +119,12 @@ class _AddrouteState extends State<Addroute> {
         const SnackBar(content: Text('Bus Route added successfully!')),
       );
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const MapAdmin()));
+          context,
+          MaterialPageRoute(
+              builder: (context) => MapAdmin(
+                    adminEmail: widget.adminEmail,
+                    adminPassword: widget.adminPassword,
+                  )));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saving route: $e')),

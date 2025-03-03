@@ -28,13 +28,14 @@ class _ParentConRegState extends State<ParentConReg> {
   void initState() {
     super.initState();
     _loadparentData();
+    _email.text = widget.email;
   }
 
   // Fetch the parent's existing data based on email
   Future<void> _loadparentData() async {
     try {
       QuerySnapshot parentSnapshot = await FirebaseFirestore.instance
-          .collection('parents')
+          .collection('parent')
           .where('email', isEqualTo: widget.email)
           .get();
 
@@ -44,9 +45,10 @@ class _ParentConRegState extends State<ParentConReg> {
           _lastName.text = data['lastName'];
           _firstName.text = data['firstName'];
           _middleName.text = data['middleName'];
-          _studentID.text = data['studentID'];
           _contactNumber.text = data['contactNumber'];
           _selectedLocation = data['address'];
+          _studentID.text = data['studentID'];
+          _email.text = data['email'];
         });
       } else {
         print("No parent found with the given email.");
@@ -60,7 +62,7 @@ class _ParentConRegState extends State<ParentConReg> {
   Future<void> _verifyStudentID(String studentID) async {
     try {
       QuerySnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('users')
+          .collection('student')
           .where('studentID', isEqualTo: studentID)
           .get();
 
@@ -92,7 +94,7 @@ class _ParentConRegState extends State<ParentConReg> {
 
     try {
       QuerySnapshot parentSnapshot = await FirebaseFirestore.instance
-          .collection('parents')
+          .collection('parent')
           .where('email', isEqualTo: widget.email)
           .get();
 
@@ -100,15 +102,15 @@ class _ParentConRegState extends State<ParentConReg> {
         String docId = parentSnapshot.docs.first.id;
 
         await FirebaseFirestore.instance
-            .collection('parents')
+            .collection('parent')
             .doc(docId)
             .update({
           'lastName': _lastName.text,
           'firstName': _firstName.text,
           'middleName': _middleName.text,
-          'studentID': _studentID.text,
           'contactNumber': _contactNumber.text,
           'address': _address.text,
+          'studentID': _studentID.text,
           'email': _email.text,
         });
 
@@ -183,10 +185,7 @@ class _ParentConRegState extends State<ParentConReg> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Parent Information"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -196,32 +195,22 @@ class _ParentConRegState extends State<ParentConReg> {
           child: Column(
             children: [
               const SizedBox(height: 24),
-              TextFormField(
-                controller: _lastName,
-                decoration: InputDecoration(
-                  labelText: "Last Name",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _firstName,
-                decoration: InputDecoration(
-                  labelText: "First Name",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _middleName,
-                decoration: InputDecoration(
-                  labelText: "Middle Name",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+              _buildTextField(_lastName, "Last Name"),
+              _buildTextField(_firstName, "First Name"),
+              _buildTextField(_middleName, "Middle Name"),
+              _buildTextField(_contactNumber, "Contact Number"),
+              GestureDetector(
+                onTap: _openMapForAddress,
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    controller: _address,
+                    decoration: InputDecoration(
+                      labelText: 'Address',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      suffixIcon: const Icon(Icons.map),
+                    ),
                   ),
                 ),
               ),
@@ -243,36 +232,12 @@ class _ParentConRegState extends State<ParentConReg> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _contactNumber,
-                decoration: InputDecoration(
-                  labelText: "Parent Contact Number",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              GestureDetector(
-                onTap: _openMapForAddress,
-                child: AbsorbPointer(
-                  child: TextFormField(
-                    controller: _address,
-                    decoration: InputDecoration(
-                      labelText: 'Address',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      suffixIcon: const Icon(Icons.map),
-                    ),
-                  ),
-                ),
-              ),
+              _buildTextField(_email, "Email Address", readOnly: true),
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _saveparentData,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: const Color.fromRGBO(75, 57, 239, 1),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 ),
@@ -287,6 +252,23 @@ class _ParentConRegState extends State<ParentConReg> {
       ),
     );
   }
+}
+
+Widget _buildTextField(TextEditingController controller, String label,
+    {bool readOnly = false}) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 16.0),
+    child: TextFormField(
+      controller: controller,
+      readOnly: readOnly,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      ),
+    ),
+  );
 }
 
 class MapPickerScreen extends StatefulWidget {
