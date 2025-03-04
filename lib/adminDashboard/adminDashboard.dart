@@ -320,9 +320,6 @@ class _MapAdminState extends State<MapAdmin> {
                       routeName: route.routeName,
                       driver: route.driver,
                       busNumber: route.busNumber,
-                      startingPoint:
-                          route.startingPoint, // Pass as Location object
-                      endPoint: route.endPoint, // Pass as Location object
                     );
                   },
                 );
@@ -358,16 +355,12 @@ class RouteCard extends StatelessWidget {
   final String routeName;
   final String driver;
   final String busNumber;
-  final Location startingPoint;
-  final Location endPoint;
 
   const RouteCard({
     super.key,
     required this.routeName,
     required this.driver,
     required this.busNumber,
-    required this.startingPoint,
-    required this.endPoint,
   });
 
   @override
@@ -396,7 +389,7 @@ class RouteCard extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          'Driver: $driver\nBus: $busNumber\nFrom: ${startingPoint.toString()}\nTo: ${endPoint.toString()}',
+          'Driver: $driver\nBus: $busNumber\n',
           style: const TextStyle(
             fontSize: 14,
             color: Colors.grey,

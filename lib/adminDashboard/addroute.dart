@@ -91,8 +91,7 @@ class _AddrouteState extends State<Addroute> {
       MaterialPageRoute(
         builder: (context) => MapPickerScreen(
           initialLocation: isStartingPoint
-              ? _startingPointLocation ??
-                  const LatLng(7.785552035561738, 122.5863163838556)
+              ? _startingPointLocation ?? const LatLng(7.7918482, 122.6030112)
               : _endPointLocation ??
                   const LatLng(7.785552035561738, 122.5863163838556),
         ),
@@ -131,6 +130,7 @@ class _AddrouteState extends State<Addroute> {
         'routeID': _routeID.text,
         'routeName': _routeName.text,
         'busID': _selectedBus,
+        'busDriver': _selectedDriver,
         'startingPoint': {
           'latitude': _startingPointLocation!.latitude,
           'longitude': _startingPointLocation!.longitude,
@@ -217,7 +217,7 @@ class _AddrouteState extends State<Addroute> {
                             }).toList(),
                             onChanged: (value) {
                               setState(() {
-                                _selectedBus = value;
+                                _selectedDriver = value;
                               });
                             },
                             decoration: InputDecoration(
