@@ -14,13 +14,14 @@ class Addroute extends StatefulWidget {
 }
 
 class _AddrouteState extends State<Addroute> {
+  String? _selectedBus;
   String? _selectedDriver;
-  List<String> _drivers = [];
+  List<String> _bus = [];
+  List<String> _driver = [];
   bool _isLoading = true;
 
   final TextEditingController _routeID = TextEditingController();
   final TextEditingController _routeName = TextEditingController();
-  final TextEditingController _busID = TextEditingController();
   final TextEditingController _startingPoint = TextEditingController();
   final TextEditingController _endPoint = TextEditingController();
 
@@ -31,6 +32,7 @@ class _AddrouteState extends State<Addroute> {
   void initState() {
     super.initState();
     _fetchBus();
+    _fetchDriver();
   }
 
   Future<void> _fetchBus() async {
@@ -38,15 +40,13 @@ class _AddrouteState extends State<Addroute> {
       QuerySnapshot snapshot =
           await FirebaseFirestore.instance.collection('bus').get();
 
-      List<String> fetchedDrivers = snapshot.docs.map((doc) {
-        String firstName = doc['firstName'] ?? '';
-        String middleName = doc['middleName'] ?? '';
-        String lastName = doc['lastName'] ?? '';
-        return '$firstName $middleName $lastName'.trim();
+      List<String> fetchedBus = snapshot.docs.map((doc) {
+        String busID = doc['busID'] ?? '';
+        return busID;
       }).toList();
 
       setState(() {
-        _drivers = fetchedDrivers;
+        _bus = fetchedBus;
         _isLoading = false;
       });
     } catch (e) {
@@ -54,7 +54,33 @@ class _AddrouteState extends State<Addroute> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching drivers: $e')),
+        SnackBar(content: Text('Error fetching bus: $e')),
+      );
+    }
+  }
+
+  Future<void> _fetchDriver() async {
+    try {
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('driver').get();
+
+      List<String> fetchedDriver = snapshot.docs.map((doc) {
+        String firstName = doc['firstName'] ?? '';
+        String middleName = doc['middleName'] ?? '';
+        String lastName = doc['lastName'] ?? '';
+        return '$firstName $middleName $lastName'.trim();
+      }).toList();
+
+      setState(() {
+        _driver = fetchedDriver;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching bus: $e')),
       );
     }
   }
@@ -90,8 +116,8 @@ class _AddrouteState extends State<Addroute> {
 
   Future<void> _submitBusRoutes() async {
     if (_routeID.text.isEmpty ||
-        _busID.text.isEmpty ||
-        _selectedDriver == null ||
+        _routeName.text.isEmpty ||
+        _selectedBus == null ||
         _startingPointLocation == null ||
         _endPointLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -104,7 +130,7 @@ class _AddrouteState extends State<Addroute> {
       await FirebaseFirestore.instance.collection('routes').add({
         'routeID': _routeID.text,
         'routeName': _routeName.text,
-        'busNumber': _busID.text,
+        'busID': _selectedBus,
         'startingPoint': {
           'latitude': _startingPointLocation!.latitude,
           'longitude': _startingPointLocation!.longitude,
@@ -156,18 +182,21 @@ class _AddrouteState extends State<Addroute> {
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         children: [
-                          TextField(
-                            controller: _routeID,
-                            decoration: InputDecoration(
-                              labelText: "Route Name",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          TextField(
-                            controller: _busID,
+                          _buildTextField('Route ID', _routeID),
+                          _buildTextField('Route Name', _routeName),
+                          DropdownButtonFormField<String>(
+                            value: _selectedBus,
+                            items: _bus.map((bus) {
+                              return DropdownMenuItem(
+                                value: bus,
+                                child: Text(bus),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedBus = value;
+                              });
+                            },
                             decoration: InputDecoration(
                               labelText: "Bus Number",
                               border: OutlineInputBorder(
@@ -175,10 +204,12 @@ class _AddrouteState extends State<Addroute> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: 16,
+                          ),
                           DropdownButtonFormField<String>(
                             value: _selectedDriver,
-                            items: _drivers.map((driver) {
+                            items: _driver.map((driver) {
                               return DropdownMenuItem(
                                 value: driver,
                                 child: Text(driver),
@@ -186,11 +217,11 @@ class _AddrouteState extends State<Addroute> {
                             }).toList(),
                             onChanged: (value) {
                               setState(() {
-                                _selectedDriver = value;
+                                _selectedBus = value;
                               });
                             },
                             decoration: InputDecoration(
-                              labelText: "Driver Name",
+                              labelText: "Bus Driver",
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
@@ -254,6 +285,23 @@ class _AddrouteState extends State<Addroute> {
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller,
+      {TextInputType keyboardType = TextInputType.text}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
     );
   }
 }

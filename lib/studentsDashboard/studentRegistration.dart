@@ -25,6 +25,7 @@ class _StudentConRegState extends State<StudentConReg> {
   final _email = TextEditingController();
   final _stopID = TextEditingController();
 
+  // ignore: unused_field
   LatLng? _selectedLocation;
 
   @override

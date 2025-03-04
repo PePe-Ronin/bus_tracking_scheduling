@@ -14,12 +14,42 @@ class addBus extends StatefulWidget {
 }
 
 class _addBusState extends State<addBus> {
+  String? _selectedDriver;
+  List<String> _driver = [];
+  bool _isLoading = true;
+
   final TextEditingController _busID = TextEditingController();
   final TextEditingController _plateNumber = TextEditingController();
   final TextEditingController _capacity = TextEditingController();
   final TextEditingController _driverID = TextEditingController();
   final String password = "stiibus2024";
   final _auth = FirebaseAuth.instance;
+
+  Future<void> _fetchDriver() async {
+    try {
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('driver').get();
+
+      List<String> fetchedDriver = snapshot.docs.map((doc) {
+        String firstName = doc['firstName'] ?? '';
+        String middleName = doc['middleName'] ?? '';
+        String lastName = doc['lastName'] ?? '';
+        return '$firstName $middleName $lastName'.trim();
+      }).toList();
+
+      setState(() {
+        _driver = fetchedDriver;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching bus: $e')),
+      );
+    }
+  }
 
   Future<void> saveBusToFirebase() async {
     // Get the values from the text controllers
@@ -31,8 +61,7 @@ class _addBusState extends State<addBus> {
     };
 
     try {
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: widget.adminEmail,
         password: widget.adminPassword,
       );
@@ -59,15 +88,28 @@ class _addBusState extends State<addBus> {
     } catch (e) {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save driver details: $e')),
+        SnackBar(content: Text('Failed to save bus details: $e')),
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDriver(); // Fetch driver list when the screen loads
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text(
+          'Add New Bus',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -83,13 +125,6 @@ class _addBusState extends State<addBus> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Add New Bus',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
               const SizedBox(height: 8),
               const Text(
                 'Enter Bus details below',
@@ -101,7 +136,45 @@ class _addBusState extends State<addBus> {
               _buildTextField('Bus ID', _busID),
               _buildTextField('Plate Number', _plateNumber),
               _buildTextField('Capacity', _capacity),
-              _buildTextField('Driver', _driverID),
+              DropdownButtonFormField<String>(
+                value: _selectedDriver,
+                items: _driver.map((driver) {
+                  return DropdownMenuItem(
+                    value: driver,
+                    child: Text(driver),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedDriver = value;
+                  });
+                },
+                decoration: InputDecoration(
+                  labelText: "Bus Driver",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 32,
+              ),
+              Center(
+                child: Container(
+                  child: ElevatedButton(
+                    onPressed: saveBusToFirebase,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromRGBO(75, 57, 239, 1),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
+                    ),
+                    child: const Text(
+                      "Save",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),

@@ -26,9 +26,8 @@ class DriverScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('drivers')
-                    .snapshots(),
+                stream:
+                    FirebaseFirestore.instance.collection('driver').snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());

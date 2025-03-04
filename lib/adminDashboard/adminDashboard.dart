@@ -34,6 +34,7 @@ class _MapAdminState extends State<MapAdmin> {
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
     _enableLocation(); // Enable location layer after map is created
+    _loadRouteMarkers();
   }
 
   // Request location permissions
@@ -125,6 +126,29 @@ class _MapAdminState extends State<MapAdmin> {
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
+  }
+
+  void _loadRouteMarkers() {
+    getRoutes().listen((routes) {
+      setState(() {
+        _markers.clear(); // Clear existing markers
+        for (var route in routes) {
+          _markers.add(
+            Marker(
+              markerId: MarkerId(route.routeName),
+              position:
+                  LatLng(route.endPoint.latitude, route.endPoint.longitude),
+              infoWindow: InfoWindow(
+                title: route.routeName,
+                snippet: 'Driver: ${route.driver}, Bus: ${route.busNumber}',
+              ),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueBlue),
+            ),
+          );
+        }
+      });
+    });
   }
 
   // Add route method for navigating to the "Add Route" page
@@ -294,14 +318,18 @@ class _MapAdminState extends State<MapAdmin> {
                     final route = routes[index];
                     return RouteCard(
                       routeName: route.routeName,
-                      driver: 'Driver: ${route.driver}',
-                      busNumber: 'Bus Number: ${route.busNumber}',
+                      driver: route.driver,
+                      busNumber: route.busNumber,
+                      startingPoint:
+                          route.startingPoint, // Pass as Location object
+                      endPoint: route.endPoint, // Pass as Location object
                     );
                   },
                 );
               },
             ),
           ),
+
           // "Add Route" button
           Padding(
             padding:
@@ -330,12 +358,16 @@ class RouteCard extends StatelessWidget {
   final String routeName;
   final String driver;
   final String busNumber;
+  final Location startingPoint;
+  final Location endPoint;
 
   const RouteCard({
     super.key,
     required this.routeName,
     required this.driver,
     required this.busNumber,
+    required this.startingPoint,
+    required this.endPoint,
   });
 
   @override
@@ -364,7 +396,7 @@ class RouteCard extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          '$driver\n$busNumber',
+          'Driver: $driver\nBus: $busNumber\nFrom: ${startingPoint.toString()}\nTo: ${endPoint.toString()}',
           style: const TextStyle(
             fontSize: 14,
             color: Colors.grey,
@@ -380,20 +412,46 @@ class RouteData {
   final String routeName;
   final String driver;
   final String busNumber;
+  final Location startingPoint;
+  final Location endPoint;
 
   RouteData({
     required this.routeName,
     required this.driver,
     required this.busNumber,
+    required this.startingPoint,
+    required this.endPoint,
   });
 
   // Factory method to create a RouteData from Firestore data
   factory RouteData.fromFirestore(Map<String, dynamic> firestoreData) {
     return RouteData(
       routeName: firestoreData['routeName'],
-      driver: firestoreData['driver'],
-      busNumber: firestoreData['busNumber'],
+      driver: firestoreData['busDriver'],
+      busNumber: firestoreData['busID'],
+      startingPoint: Location.fromMap(firestoreData['startingPoint'] ?? {}),
+      endPoint: Location.fromMap(firestoreData['endPoint'] ?? {}),
     );
+  }
+}
+
+// New class to handle location data
+class Location {
+  final double latitude;
+  final double longitude;
+
+  Location({required this.latitude, required this.longitude});
+
+  factory Location.fromMap(Map<String, dynamic> map) {
+    return Location(
+      latitude: (map['latitude'] ?? 0.0).toDouble(),
+      longitude: (map['longitude'] ?? 0.0).toDouble(),
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Lat: $latitude, Lng: $longitude';
   }
 }
 
