@@ -103,7 +103,7 @@ class _addBusState extends State<addBus> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Add New Bus',
           style: TextStyle(
             fontSize: 24,
@@ -156,7 +156,7 @@ class _addBusState extends State<addBus> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 32,
               ),
               Center(

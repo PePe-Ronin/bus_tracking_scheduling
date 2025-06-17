@@ -40,7 +40,7 @@ class _driverDashboardState extends State<driverDashboard> {
   Timer? _timer;
 
   void _startDateTimeUpdater() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         currentDateTime =
             DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
@@ -270,14 +270,14 @@ class _driverDashboardState extends State<driverDashboard> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Card(
-                margin: EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -301,7 +301,7 @@ class _driverDashboardState extends State<driverDashboard> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                       Container(
                         height: 120,
                         width: double.infinity,
@@ -314,14 +314,14 @@ class _driverDashboardState extends State<driverDashboard> {
                   ),
                 ),
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               Card(
-                margin: EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -335,7 +335,7 @@ class _driverDashboardState extends State<driverDashboard> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             "Number of Student",
                             style: GoogleFonts.poppins(
@@ -351,7 +351,7 @@ class _driverDashboardState extends State<driverDashboard> {
                               color: Colors.teal,
                             ),
                           ),
-                          Container(
+                          SizedBox(
                             width: 300,
                             height: 300,
                             child: QrImageView(

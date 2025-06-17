@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:bus/adminDashboard/adminDashboard.dart';
 import 'package:bus/parentDashboard/parentRegistration.dart';
 import 'package:bus/studentsDashboard/studentRegistration.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:bus/login_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
