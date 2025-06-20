@@ -2,12 +2,17 @@ import 'package:bus/adminDashboard/addbus.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class busScreen extends StatelessWidget {
+class busScreen extends StatefulWidget {
   final String adminEmail;
   final String adminPassword;
   const busScreen(
       {super.key, required this.adminEmail, required this.adminPassword});
 
+  @override
+  State<busScreen> createState() => _busScreenState();
+}
+
+class _busScreenState extends State<busScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,15 +76,15 @@ class busScreen extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => const addBus(
-                  //       adminEmail: widget.adminEmail,
-                  //       adminPassword: widget.adminPassword,
-                  //     ),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => addBus(
+                        adminEmail: widget.adminEmail,
+                        adminPassword: widget.adminPassword,
+                      ),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
