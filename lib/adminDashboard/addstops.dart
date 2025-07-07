@@ -10,8 +10,7 @@ class Addstops extends StatefulWidget {
 
 class _AddstopsState extends State<Addstops> {
   final TextEditingController stopID = TextEditingController();
-  final TextEditingController latitude = TextEditingController();
-  final TextEditingController longitude = TextEditingController();
+  final TextEditingController latlng = TextEditingController();
   final TextEditingController routeID = TextEditingController();
   final TextEditingController status = TextEditingController();
   final String password = "stiibus2024";
@@ -48,11 +47,10 @@ class _AddstopsState extends State<Addstops> {
                 'Enter Bus Stops below',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-              _buildTextField('Enter Schedule ID', stopID),
-              _buildTextField('Select Route Name', latitude),
-              _buildTextField('Select Departure Time', longitude),
-              _buildTextField('Select Arrival Time', routeID),
-              _buildTextField('Select Bus Number', status),
+              _buildTextField('Enter Stop Name', stopID),
+              _buildTextField('Select Stop Location', latlng),
+              _buildTextField('Select Route', routeID),
+              _buildTextField('Set Status', status),
             ],
           ),
         ),
