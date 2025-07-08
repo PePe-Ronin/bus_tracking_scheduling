@@ -7,17 +7,17 @@ class studentAttendance extends StatefulWidget {
   State<studentAttendance> createState() => _studentAttendanceState();
 }
 
-final Color gradientStart = Color(0xFF4F92FF);
-final Color gradientEnd = Color(0xFF7B42F6);
+final Color gradientStart = const Color(0xFF4F92FF);
+final Color gradientEnd = const Color(0xFF7B42F6);
 
 class _studentAttendanceState extends State<studentAttendance> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Attendance'),
-        leading: Icon(Icons.arrow_back),
-        actions: [
+        title: const Text('Attendance'),
+        leading: const Icon(Icons.arrow_back),
+        actions: const [
           Icon(Icons.download),
           SizedBox(width: 16),
           Icon(Icons.more_vert),
@@ -39,8 +39,8 @@ class _studentAttendanceState extends State<studentAttendance> {
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
-              padding: EdgeInsets.all(16),
-              child: Row(
+              padding: const EdgeInsets.all(16),
+              child: const Row(
                 children: [
                   Expanded(
                     child: Column(
@@ -66,16 +66,16 @@ class _studentAttendanceState extends State<studentAttendance> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                color: Color(0xFFF2F3F7),
+                color: const Color(0xFFF2F3F7),
                 borderRadius: BorderRadius.circular(20),
               ),
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -87,7 +87,7 @@ class _studentAttendanceState extends State<studentAttendance> {
                       ],
                     ),
                   ),
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -100,12 +100,13 @@ class _studentAttendanceState extends State<studentAttendance> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Color(0xFFDBCCFF),
+                      color: const Color(0xFFDBCCFF),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(Icons.directions_bus, size: 16),
                         SizedBox(width: 4),
@@ -116,29 +117,29 @@ class _studentAttendanceState extends State<studentAttendance> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               decoration: InputDecoration(
                 hintText: 'Search students by name or ID',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               children: [
-                Text('Student List',
+                const Text('Student List',
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                Spacer(),
+                const Spacer(),
                 _statusCounter('Present', 24, Colors.teal),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 _statusCounter('Absent', 3, Colors.redAccent),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             _studentCard('John Smith', 'STU-001', '08:30 AM'),
             _studentCard('John Smith', 'STU-001', '08:30 AM'),
             _studentCard('John Smith', 'STU-001', '08:30 AM'),
@@ -154,12 +155,12 @@ class _studentAttendanceState extends State<studentAttendance> {
 
   Widget _statusCounter(String label, int count, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration:
           BoxDecoration(color: color, borderRadius: BorderRadius.circular(20)),
       child: Text(
         '$label: $count',
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
       ),
     );
   }
@@ -172,19 +173,19 @@ class _studentAttendanceState extends State<studentAttendance> {
           backgroundColor: Colors.purple.shade100,
           child: Text(
             name.split(' ').map((e) => e[0]).take(2).join(),
-            style: TextStyle(color: Colors.deepPurple),
+            style: const TextStyle(color: Colors.deepPurple),
           ),
         ),
         title: Text(name),
         subtitle: Text('Student ID: $id\nIn: $timeIn'),
         isThreeLine: true,
         trailing: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.teal,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Text(
+          child: const Text(
             'Present',
             style: TextStyle(color: Colors.white),
           ),

@@ -27,10 +27,10 @@ class _addTripsState extends State<addTrips> {
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined),
             onPressed: () {},
-            color: Color(0xFF8C82FF),
+            color: const Color(0xFF8C82FF),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
+          const Padding(
+            padding: EdgeInsets.only(right: 12),
             child: CircleAvatar(
               backgroundColor: Color(0xFF4D3CFF),
               child: Icon(Icons.add, color: Colors.white),
@@ -43,13 +43,13 @@ class _addTripsState extends State<addTrips> {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Color(0xFF4D3CFF),
+              color: const Color(0xFF4D3CFF),
               borderRadius: BorderRadius.circular(20),
             ),
             padding: const EdgeInsets.all(24),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Icon(Icons.directions_bus, color: Colors.white, size: 28),
                 SizedBox(height: 8),
                 Text(
@@ -72,7 +72,7 @@ class _addTripsState extends State<addTrips> {
             ),
           ),
           const SizedBox(height: 20),
-          TripCard(
+          const TripCard(
             date: "March 15, 2024",
             scheduleId: "SCH-2024-001",
             time: "08:30 AM",
@@ -80,7 +80,7 @@ class _addTripsState extends State<addTrips> {
             statusColor: Colors.teal,
           ),
           const SizedBox(height: 12),
-          TripCard(
+          const TripCard(
             date: "March 16, 2024",
             scheduleId: "SCH-2024-002",
             time: "10:15 AM",
@@ -121,7 +121,7 @@ class TripCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.confirmation_number_outlined,
+                const Icon(Icons.confirmation_number_outlined,
                     color: Color(0xFF4D3CFF)),
                 const SizedBox(width: 8),
                 Expanded(child: Container()),

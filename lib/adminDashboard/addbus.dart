@@ -16,7 +16,6 @@ class addBus extends StatefulWidget {
 class _addBusState extends State<addBus> {
   String? _selectedDriver;
   List<String> _driver = [];
-  bool _isLoading = true;
 
   final TextEditingController _busID = TextEditingController();
   final TextEditingController _plateNumber = TextEditingController();
@@ -39,12 +38,9 @@ class _addBusState extends State<addBus> {
 
       setState(() {
         _driver = fetchedDriver;
-        _isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() {});
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching bus: $e')),
       );
