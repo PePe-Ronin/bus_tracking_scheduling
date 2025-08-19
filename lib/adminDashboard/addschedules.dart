@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Addschedules extends StatefulWidget {
   const Addschedules({super.key});
@@ -14,8 +15,52 @@ class _AddschedulesState extends State<Addschedules> {
   final TextEditingController departureTime = TextEditingController();
   final TextEditingController arrivalTime = TextEditingController();
   final TextEditingController busID = TextEditingController();
-  final String password = "stiibus2024";
+  final TextEditingController passwordController = TextEditingController();
   final _auth = FirebaseAuth.instance;
+
+  Future<void> saveScheduleToFirebase() async {
+    if (schedID.text.isEmpty ||
+        routeID.text.isEmpty ||
+        departureTime.text.isEmpty ||
+        arrivalTime.text.isEmpty ||
+        busID.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email:
+            'admin@example.com', // Replace with actual admin email or pass as parameter
+        password: passwordController.text,
+      );
+
+      final scheduleData = {
+        'scheduleID': schedID.text,
+        'routeID': routeID.text,
+        'departureTime': departureTime.text,
+        'arrivalTime': arrivalTime.text,
+        'busID': busID.text,
+      };
+
+      await FirebaseFirestore.instance
+          .collection('schedules')
+          .doc(userCredential.user!.uid)
+          .set(scheduleData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Schedule saved successfully!')),
+      );
+
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save schedule: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +98,21 @@ class _AddschedulesState extends State<Addschedules> {
               _buildTextField('Select Departure Time', departureTime),
               _buildTextField('Select Arrival Time', arrivalTime),
               _buildTextField('Select Bus Number', busID),
+              const SizedBox(height: 32),
+              Center(
+                child: ElevatedButton(
+                  onPressed: saveScheduleToFirebase,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(75, 57, 239, 1),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 16),
+                  ),
+                  child: const Text(
+                    "Save",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
             ],
           ),
         ),

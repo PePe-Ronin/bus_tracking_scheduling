@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Addstops extends StatefulWidget {
   const Addstops({super.key});
@@ -13,8 +14,50 @@ class _AddstopsState extends State<Addstops> {
   final TextEditingController latlng = TextEditingController();
   final TextEditingController routeID = TextEditingController();
   final TextEditingController status = TextEditingController();
-  final String password = "stiibus2024";
+  final TextEditingController passwordController = TextEditingController();
   final _auth = FirebaseAuth.instance;
+
+  Future<void> saveStopToFirebase() async {
+    if (stopID.text.isEmpty ||
+        latlng.text.isEmpty ||
+        routeID.text.isEmpty ||
+        status.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email:
+            'admin@example.com', // Replace with actual admin email or pass as parameter
+        password: passwordController.text,
+      );
+
+      final stopData = {
+        'stopID': stopID.text,
+        'latlng': latlng.text,
+        'routeID': routeID.text,
+        'status': status.text,
+      };
+
+      await FirebaseFirestore.instance
+          .collection('stops')
+          .doc(userCredential.user!.uid)
+          .set(stopData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Stop saved successfully!')),
+      );
+
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save stop: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +94,21 @@ class _AddstopsState extends State<Addstops> {
               _buildTextField('Select Stop Location', latlng),
               _buildTextField('Select Route', routeID),
               _buildTextField('Set Status', status),
+              const SizedBox(height: 32),
+              Center(
+                child: ElevatedButton(
+                  onPressed: saveStopToFirebase,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(75, 57, 239, 1),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 16),
+                  ),
+                  child: const Text(
+                    "Save",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
             ],
           ),
         ),

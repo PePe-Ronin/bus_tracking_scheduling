@@ -20,7 +20,7 @@ class _AddDriverPageState extends State<AddDriver> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController licenseNumberController = TextEditingController();
   final TextEditingController licenseExpiryController = TextEditingController();
-  final String passwordController = "stiibus2024";
+  final TextEditingController passwordController = TextEditingController();
   final _auth = FirebaseAuth.instance;
 
   @override
@@ -33,6 +33,7 @@ class _AddDriverPageState extends State<AddDriver> {
     emailController.dispose();
     licenseNumberController.dispose();
     licenseExpiryController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -45,7 +46,7 @@ class _AddDriverPageState extends State<AddDriver> {
       'middleName': driverMiddleName.text,
       'phoneNumber': phoneNumberController.text,
       'email': emailController.text,
-      'password': passwordController,
+      // Do not store password in Firestore for security reasons
       'licenseNumber': licenseNumberController.text,
       'licenseExpiryDate': licenseExpiryController.text,
       'status': "Offline",
@@ -57,7 +58,7 @@ class _AddDriverPageState extends State<AddDriver> {
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: emailController.text,
-        password: passwordController,
+        password: passwordController.text,
       );
 
       // Save the data to Firestore
@@ -79,6 +80,7 @@ class _AddDriverPageState extends State<AddDriver> {
       emailController.clear();
       licenseNumberController.clear();
       licenseExpiryController.clear();
+      passwordController.clear();
 
       Navigator.pushReplacement(
         context,
