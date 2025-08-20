@@ -82,7 +82,12 @@ class _MapAdminState extends State<MapAdmin> {
 
   void _navigateToStops() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const Addstops()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => Addstops(
+                  adminEmail: widget.adminEmail,
+                  adminPassword: widget.adminPassword,
+                )));
   }
 
   void _navigateToBus() {

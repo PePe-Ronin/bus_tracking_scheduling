@@ -1,49 +1,54 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class UserModel {
   final String id;
   final String email;
-  final String userType;
+  final String role;
   final String firstName;
   final String lastName;
-  final String? phoneNumber;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String phone;
+  final String? profileImage;
+  final Map<String, dynamic>? additionalData;
 
   UserModel({
     required this.id,
     required this.email,
-    required this.userType,
+    required this.role,
     required this.firstName,
     required this.lastName,
-    this.phoneNumber,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.phone,
+    this.profileImage,
+    this.additionalData,
   });
 
-  factory UserModel.fromFirestore(DocumentSnapshot doc) {
-    Map data = doc.data() as Map<String, dynamic>;
+  // Convert a UserModel into a Map.
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'email': email,
+      'role': role,
+      'firstName': firstName,
+      'lastName': lastName,
+      'phone': phone,
+      'profileImage': profileImage,
+      'additionalData': additionalData,
+    };
+  }
+
+  // Create a UserModel from a Map.
+  factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: doc.id,
-      email: data['email'] ?? '',
-      userType: data['userType'] ?? '',
-      firstName: data['firstName'] ?? '',
-      lastName: data['lastName'] ?? '',
-      phoneNumber: data['phoneNumber'],
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-      updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+      id: map['id'] ?? '',
+      email: map['email'] ?? '',
+      role: map['role'] ?? '',
+      firstName: map['firstName'] ?? '',
+      lastName: map['lastName'] ?? '',
+      phone: map['phone'] ?? '',
+      profileImage: map['profileImage'],
+      additionalData: map['additionalData'],
     );
   }
 
-  Map<String, dynamic> toFirestore() {
-    return {
-      'email': email,
-      'userType': userType,
-      'firstName': firstName,
-      'lastName': lastName,
-      'phoneNumber': phoneNumber,
-      'createdAt': Timestamp.fromDate(createdAt),
-      'updatedAt': Timestamp.fromDate(updatedAt),
-    };
+  // Create a UserModel from Firestore document
+  factory UserModel.fromFirestore(Map<String, dynamic> map) {
+    return UserModel.fromMap(map);
   }
 }
